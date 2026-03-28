@@ -67,7 +67,6 @@ fun BottomNavigationBar(
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
             .padding(bottom = 24.dp)
-            // Dar margen arriba para que el ícono pueda flotar sin cortarse
             .padding(top = 32.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -85,7 +84,6 @@ fun BottomNavigationBar(
                 )
                 .background(barBackgroundColor, RoundedCornerShape(percent = 50))
         )
-        // Se colocan encima del fondo. Al no tener "shadow" este Row, los hijos pueden salir libres
         Row(
             modifier = Modifier
                 .widthIn(max = 400.dp)

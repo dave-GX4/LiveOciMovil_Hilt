@@ -7,6 +7,6 @@ class GetSchedulesRemoteUseCase @Inject constructor(
     private val repository: ScheduleRepository
 ) {
     suspend operator fun invoke(){
-        repository.getSchedulesRemote()
+        repository.getAllSchedulesRemote()
     }
 }

@@ -20,6 +20,5 @@ import com.updavid.liveoci_hilt.core.database.entities.UserEntity
 @TypeConverters(Converters::class)
 abstract class AppDataBase: RoomDatabase(){
     abstract fun scheduleDao(): ScheduleDao
-
     abstract fun userDao(): UserDao
 }

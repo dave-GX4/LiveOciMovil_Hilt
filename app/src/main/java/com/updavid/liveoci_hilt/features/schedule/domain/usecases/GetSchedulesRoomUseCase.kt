@@ -9,7 +9,7 @@ class GetSchedulesRoomUseCase @Inject constructor(
     private val repository: ScheduleRepository
 ) {
     operator fun invoke(): Flow<List<Schedule>>{
-        val schedules = repository.getSchedulesRoom()
+        val schedules = repository.getAllSchedulesRoom()
 
         return  schedules
     }

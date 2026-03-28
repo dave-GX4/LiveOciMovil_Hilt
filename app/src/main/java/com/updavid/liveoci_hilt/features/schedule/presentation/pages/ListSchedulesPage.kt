@@ -73,7 +73,6 @@ fun ListSchedulesPage(
             )
         }
     ) { paddingValues ->
-        // El PullToRefresh envuelve toda la lista
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
             onRefresh = { viewModel.downloadSchedulesManual() },

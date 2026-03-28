@@ -106,7 +106,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getSchedulesRoom(): Flow<List<Schedule>> {
+    override fun getAllSchedulesRoom(): Flow<List<Schedule>> {
         return dao.getAllSchedules()
             .map { entities ->
                 entities.map { it.toDomain() }
@@ -118,7 +118,7 @@ class ScheduleRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getSchedulesRemote() {
+    override suspend fun getAllSchedulesRemote() {
         try {
             val remoteSchedule = api.getAllSchedules()
 

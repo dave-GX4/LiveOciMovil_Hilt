@@ -24,10 +24,8 @@ object DataBaseModule {
             "LiveOciDB"
         ).build()
     }
-
     @Provides
     fun provideScheduleDao(db: AppDataBase): ScheduleDao = db.scheduleDao()
-
     @Provides
     fun provideUserDao(db: AppDataBase): UserDao = db.userDao()
 }
