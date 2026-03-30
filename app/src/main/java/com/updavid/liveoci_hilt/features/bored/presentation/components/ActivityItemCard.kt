@@ -106,7 +106,7 @@ fun ActivityItemCard(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                         modifier = Modifier.height(32.dp)
                     ) {
-                        Text("Ver", color = MaterialTheme.colorScheme.background, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("Crear similar", color = MaterialTheme.colorScheme.background, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }

@@ -57,7 +57,6 @@ class BoredActivitiesRepositoryImpl @Inject constructor(
 
     override suspend fun getActivityByKey(key: String): BoredActivity {
         return try {
-            // LE PASAMOS EL KEY A LA API
             val responseDto = api.getActivityByKey(key = key)
             responseDto.toDomain()
         } catch (e: HttpException) {
@@ -74,6 +73,4 @@ class BoredActivitiesRepositoryImpl @Inject constructor(
             throw Exception("Error de conexión, revisa tu internet.")
         }
     }
-
-
 }

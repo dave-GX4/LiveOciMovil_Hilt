@@ -2,10 +2,8 @@ package com.updavid.liveoci_hilt.features.bored.data.datasource.remote.models.Re
 
 data class BoredActivityResponseDto(
     val activity: String,
-    val availability: Float,
     val type: String,
     val  participants: Int,
-    val price: Float,
     val accessibility: String,
     val duration: String,
     val kidFriendly: Boolean,

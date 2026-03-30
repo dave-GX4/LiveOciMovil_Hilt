@@ -71,4 +71,8 @@ class BoredActivityViewModel @Inject constructor(
 
         loadActivitiesBored()
     }
+
+    fun generateActivityBored(){
+
+    }
 }

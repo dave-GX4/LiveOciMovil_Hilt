@@ -6,14 +6,14 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ActivitiesBoredApi {
-    @GET("random")
+    @GET("external/random")
     suspend fun getRandomActivity(): BoredActivityResponseDto
-    @GET("filter")
+    @GET("external/filter")
     suspend fun getFilterActivities(
         @Query("type") type: String? = null,
         @Query("participants") participants: Int? = null
     ): List<BoredActivityResponseDto>
-    @GET("activity/{key}")
+    @GET("external/{key}")
     suspend fun getActivityByKey(
         @Path("key") key: String
     ): BoredActivityResponseDto

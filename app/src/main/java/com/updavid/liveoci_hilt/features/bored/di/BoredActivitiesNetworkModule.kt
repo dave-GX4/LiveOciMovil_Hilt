@@ -1,6 +1,6 @@
 package com.updavid.liveoci_hilt.features.bored.di
 
-import com.updavid.liveoci_hilt.core.di.BoredRetrofit
+import com.updavid.liveoci_hilt.core.di.LiveOciRetrofit
 import com.updavid.liveoci_hilt.features.bored.data.datasource.remote.api.ActivitiesBoredApi
 import dagger.Module
 import dagger.Provides
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 object BoredActivitiesNetworkModule {
     @Provides
     @Singleton
-    fun providerBoredActivitiesApi(@BoredRetrofit retrofit: Retrofit): ActivitiesBoredApi{
+    fun providerBoredActivitiesApi(@LiveOciRetrofit retrofit: Retrofit): ActivitiesBoredApi{
         return retrofit.create(ActivitiesBoredApi::class.java)
     }
 }

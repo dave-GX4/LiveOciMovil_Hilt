@@ -20,24 +20,4 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
-    @Provides
-    @Singleton
-    @BoredRetrofit
-    fun provideBoredRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://bored-api.appbrewery.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    @GeminiModel
-    fun provideGeminiModelRetrofit(): Retrofit{
-        return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
 }
