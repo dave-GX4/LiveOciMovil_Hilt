@@ -1,9 +1,12 @@
 package com.updavid.liveoci_hilt.features.bored.presentation.page
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +18,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -27,11 +33,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,8 +50,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.updavid.liveoci_hilt.core.ui.states.FilterType
 import com.updavid.liveoci_hilt.features.bored.presentation.components.ActivityItemCard
 import com.updavid.liveoci_hilt.features.bored.presentation.components.FilterChipCustom
+import com.updavid.liveoci_hilt.features.bored.presentation.components.FilterSelectorButton
 import com.updavid.liveoci_hilt.features.bored.presentation.viewmodel.BoredActivityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +63,22 @@ fun BoredActivityPage(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.isError, uiState.successMessage) {
+        uiState.isError?.let {
+            snackbarHostState.showSnackbar(message = it, duration = SnackbarDuration.Short)
+            viewModel.clearMessages()
+        }
+        uiState.successMessage?.let {
+            snackbarHostState.showSnackbar(message = it, duration = SnackbarDuration.Short)
+            viewModel.clearMessages()
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Actividades", fontWeight = FontWeight.Bold) },
@@ -75,6 +101,15 @@ fun BoredActivityPage(
             }
         }
     ) { paddingValues ->
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,114 +118,87 @@ fun BoredActivityPage(
         ) {
 
             item {
-                Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp)) {
-                    Text(
-                        text = "Descubrir Nuevas",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        lineHeight = 36.sp
-                    )
-                    Text(
-                        text = "Actividades",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "Aumenta tu dopamina de forma natural con selecciones curadas.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-            }
-
-            item {
                 Text(
-                    text = "Categoría",
+                    text = "Filtrar por",
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(start = 24.dp, top = 8.dp, bottom = 8.dp)
                 )
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Row(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(viewModel.categories) { category ->
-                        val isSelected = uiState.selectedCategory?.apiName == category.apiName
-                        FilterChipCustom(
-                            text = category.nameEs,
-                            isSelected = isSelected,
-                            onClick = { viewModel.onCategorySelected(category) }
-                        )
-                    }
-                }
-            }
-
-            item {
-                Text(
-                    text = "Participantes",
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 8.dp)
-                )
-                val participantOptions = listOf(null, 1, 2, 3, 4, 5, 6, 8)
-
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(participantOptions) { count ->
-                        val isSelected = uiState.selectedParticipants == count
-                        val textDisplay = count?.toString() ?: "Todos"
-
-                        FilterChipCustom(
-                            text = textDisplay,
-                            isSelected = isSelected,
-                            onClick = { viewModel.onParticipantsSelected(count) }
-                        )
-                    }
+                    FilterSelectorButton(
+                        text = "Categoría",
+                        icon = Icons.Default.List,
+                        isActive = uiState.activeFilter == FilterType.CATEGORY,
+                        onClick = { viewModel.toggleFilter(FilterType.CATEGORY) }
+                    )
+                    FilterSelectorButton(
+                        text = "Participantes",
+                        icon = Icons.Default.Person,
+                        isActive = uiState.activeFilter == FilterType.PARTICIPANTS,
+                        onClick = { viewModel.toggleFilter(FilterType.PARTICIPANTS) }
+                    )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            when {
-                uiState.isLoading -> {
-                    item {
-                        Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                }
-                uiState.isError != null -> {
-                    item {
-                        Column(
-                            modifier = Modifier.fillMaxWidth().padding(32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+            item {
+                AnimatedVisibility(visible = uiState.activeFilter == FilterType.CATEGORY) {
+                    Column {
+                        Text(text = "Selecciona Categoría", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(start = 24.dp))
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Icon(Icons.Default.Warning, contentDescription = null, tint = Color.Red, modifier = Modifier.size(48.dp))
-                            Text("Oops! ${uiState.isError}", color = Color.Red, modifier = Modifier.padding(top = 8.dp))
-                            Button(
-                                onClick = { viewModel.loadActivitiesBored() },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                            ) { Text("Reintentar", color = MaterialTheme.colorScheme.background) }
+                            items(viewModel.categories) { category ->
+                                val isSelected = uiState.selectedCategory?.apiName == category.apiName
+                                FilterChipCustom(
+                                    text = category.nameEs,
+                                    isSelected = isSelected,
+                                    onClick = { viewModel.onCategorySelected(category) }
+                                )
+                            }
                         }
                     }
                 }
-                uiState.activities.isEmpty() -> {
-                    item {
-                        Text(
-                            text = "No se encontraron actividades con estos filtros.",
-                            modifier = Modifier.fillMaxWidth().padding(32.dp),
-                            color = Color.Gray
-                        )
+
+                AnimatedVisibility(visible = uiState.activeFilter == FilterType.PARTICIPANTS) {
+                    Column {
+                        Text(text = "Número de personas", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(start = 24.dp))
+                        val participantOptions = listOf(null, 1, 2, 3, 4, 5, 6, 8)
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(participantOptions) { count ->
+                                val isSelected = uiState.selectedParticipants == count
+                                FilterChipCustom(
+                                    text = count?.toString() ?: "Todos",
+                                    isSelected = isSelected,
+                                    onClick = { viewModel.onParticipantsSelected(count) }
+                                )
+                            }
+                        }
                     }
                 }
-                else -> {
-                    items(uiState.activities) { activity ->
-                        ActivityItemCard(
-                            activity = activity,
-                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                        )
-                    }
+            }
+
+            if (uiState.activities.isEmpty() && !uiState.isLoading) {
+                item {
+                    Text(
+                        text = "No se encontraron actividades.",
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                items(uiState.activities) { activity ->
+                    ActivityItemCard(
+                        activity = activity,
+                        onGenerateClick = { viewModel.onGenerateActivityClicked(it) },
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                    )
                 }
             }
         }

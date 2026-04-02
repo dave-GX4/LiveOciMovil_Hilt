@@ -37,6 +37,7 @@ import com.updavid.liveoci_hilt.features.bored.domain.entity.BoredActivity
 @Composable
 fun ActivityItemCard(
     activity: BoredActivity,
+    onGenerateClick: (BoredActivity) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -100,13 +101,13 @@ fun ActivityItemCard(
                     }
 
                     Button(
-                        onClick = { /* TODO: Navegar al detalle pasando el activity.key */ },
+                        onClick = {onGenerateClick(activity)},
                         shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                         modifier = Modifier.height(32.dp)
                     ) {
-                        Text("Crear similar", color = MaterialTheme.colorScheme.background, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("Crear Actividad", color = MaterialTheme.colorScheme.background, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }

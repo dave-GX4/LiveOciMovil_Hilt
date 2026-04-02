@@ -2,9 +2,13 @@ package com.updavid.liveoci_hilt.features.bored.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.updavid.liveoci_hilt.core.ui.states.FilterType
+import com.updavid.liveoci_hilt.features.bored.domain.entity.BoredActivity
 import com.updavid.liveoci_hilt.features.bored.domain.entity.CategoryModel
 import com.updavid.liveoci_hilt.features.bored.domain.usecases.BoredActivitiesUseCases
 import com.updavid.liveoci_hilt.features.bored.presentation.page.BoredActivityUiState
+import com.updavid.liveoci_hilt.features.leisure.domain.usecases.GeminiUseCases
+import com.updavid.liveoci_hilt.features.leisure.domain.usecases.GenerateActivityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BoredActivityViewModel @Inject constructor(
-    private val boredActivitiesUseCases: BoredActivitiesUseCases
+    private val boredActivitiesUseCases: BoredActivitiesUseCases,
+    private val geminiUseCases: GeminiUseCases
 ): ViewModel() {
     private val _uiState = MutableStateFlow(BoredActivityUiState())
     val uiState = _uiState.asStateFlow()
@@ -60,6 +65,12 @@ class BoredActivityViewModel @Inject constructor(
         }
     }
 
+    fun toggleFilter(filter: FilterType) {
+        _uiState.update {
+            it.copy(activeFilter = if (it.activeFilter == filter) FilterType.NONE else filter)
+        }
+    }
+
     fun onCategorySelected(category: CategoryModel) {
         _uiState.update { it.copy(selectedCategory = category) }
 
@@ -72,7 +83,26 @@ class BoredActivityViewModel @Inject constructor(
         loadActivitiesBored()
     }
 
-    fun generateActivityBored(){
+    fun onGenerateActivityClicked(activity: BoredActivity) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, isError = null, successMessage = null) }
 
+            val result = geminiUseCases.generateActivity(activity)
+
+            result.onSuccess { geminiMessage ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        successMessage = "¡${geminiMessage.message}!"
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update { it.copy(isLoading = false, isError = error.message) }
+            }
+        }
+    }
+
+    fun clearMessages() {
+        _uiState.update { it.copy(isError = null, successMessage = null) }
     }
 }
