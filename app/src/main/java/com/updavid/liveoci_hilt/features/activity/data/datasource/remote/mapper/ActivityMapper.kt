@@ -10,7 +10,7 @@ fun ActivityResponseDto.toDomain(): Activity{
         description = this.description,
         type = this.type,
         category = this.category,
-        duration_minutes = this.duration_minutes,
-        social_type = this.social_type
+        durationMinutes = this.durationMinutes,
+        socialType = this.socialType
     )
 }
