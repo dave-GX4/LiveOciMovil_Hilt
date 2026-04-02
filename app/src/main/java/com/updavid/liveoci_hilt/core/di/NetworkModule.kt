@@ -16,7 +16,7 @@ object NetworkModule {
     @LiveOciRetrofit
     fun provideLiveOciRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .baseUrl("https://api-live-oci-production.up.railway.app/api/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
