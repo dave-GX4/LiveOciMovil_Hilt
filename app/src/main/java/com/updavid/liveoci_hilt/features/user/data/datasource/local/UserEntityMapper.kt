@@ -12,5 +12,5 @@ fun UserEntity.toDomain() = User(
     interests,
     topics,
     description,
-    leisure_type
+    leisureType
 )

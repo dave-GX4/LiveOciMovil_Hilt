@@ -9,5 +9,5 @@ data class UserResponseDto(
     val interests: List<String>,
     val topics: List<String>,
     val description: String,
-    val leisure_type: String
+    val leisureType: String
 )

@@ -21,5 +21,5 @@ fun UserResponseDto.toEntity() = UserEntity(
     interests,
     topics,
     description,
-    leisure_type
+    leisureType
 )
