@@ -7,9 +7,9 @@ import javax.inject.Inject
 class UpdateEmailUserUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(id: String, email: String): Result<UserMessage>{
+    suspend operator fun invoke(email: String): Result<UserMessage>{
         return try {
-            val  response = repository.updateEmailUser(id, email)
+            val  response = repository.updateEmailUser(email)
 
             Result.success(response)
         }catch (e: Exception){

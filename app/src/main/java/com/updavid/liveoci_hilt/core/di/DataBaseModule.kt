@@ -17,12 +17,12 @@ import javax.inject.Singleton
 object DataBaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDataBase{
+    fun provideDatabase(@ApplicationContext context: Context): AppDataBase {
         return Room.databaseBuilder(
             context,
             AppDataBase::class.java,
             "LiveOciDB"
-        ).build()
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
     }
     @Provides
     fun provideScheduleDao(db: AppDataBase): ScheduleDao = db.scheduleDao()

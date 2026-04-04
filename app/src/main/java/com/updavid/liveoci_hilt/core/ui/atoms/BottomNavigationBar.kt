@@ -70,7 +70,6 @@ fun BottomNavigationBar(
             .padding(top = 32.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-        // Barra del BootomBar
         Box(
             modifier = Modifier
                 .widthIn(max = 400.dp)

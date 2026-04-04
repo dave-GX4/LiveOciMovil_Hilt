@@ -14,6 +14,10 @@ object ListSchedules
 @Serializable
 object Profile
 @Serializable
+object ProfileEdit
+@Serializable
 object Tastes
 @Serializable
 object BoredActivity
+@Serializable
+object Splash

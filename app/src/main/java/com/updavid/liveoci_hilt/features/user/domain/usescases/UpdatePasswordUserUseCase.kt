@@ -7,9 +7,9 @@ import javax.inject.Inject
 class UpdatePasswordUserUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(id: String, password: String): Result<UserMessage>{
+    suspend operator fun invoke(password: String): Result<UserMessage>{
         return try {
-            val  response = repository.updatePasswordUser(id, password)
+            val  response = repository.updatePasswordUser(password)
 
             Result.success(response)
         }catch (e: Exception){

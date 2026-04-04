@@ -7,7 +7,6 @@ fun UserEntity.toDomain() = User(
     id,
     name,
     email,
-    password,
     notification,
     interests,
     topics,

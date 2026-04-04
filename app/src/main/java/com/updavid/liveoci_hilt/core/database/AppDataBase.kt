@@ -14,7 +14,7 @@ import com.updavid.liveoci_hilt.core.database.entities.UserEntity
         ScheduleEntity::class,
         UserEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

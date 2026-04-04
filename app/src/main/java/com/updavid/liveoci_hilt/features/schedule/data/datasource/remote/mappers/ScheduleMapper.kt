@@ -16,8 +16,8 @@ fun ScheduleResponseDto.toEntity() = ScheduleEntity(
     id,
     title,
     days,
-    start_time,
-    end_time,
+    startTime,
+    endTime,
     active,
     type
 )

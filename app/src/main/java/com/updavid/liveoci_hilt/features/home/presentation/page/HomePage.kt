@@ -77,7 +77,7 @@ fun HomePage(
                         text = "Recomendado para ti",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A) // slate-900
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
                         text = "Actualizar",

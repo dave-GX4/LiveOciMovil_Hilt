@@ -12,7 +12,7 @@ fun NavigationWrapper(
 
     NavHost(
         navController = navController,
-        startDestination = Home
+        startDestination = Splash
     ){
         navGraphs.forEach {
             featureNavGraph -> featureNavGraph.registerGraph(this, navController)

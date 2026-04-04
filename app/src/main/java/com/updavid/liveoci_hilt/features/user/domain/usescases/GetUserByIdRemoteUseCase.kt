@@ -6,7 +6,9 @@ import javax.inject.Inject
 class GetUserByIdRemoteUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(id: String){
-        repository.getUserByIdRemote(id)
+    suspend operator fun invoke(): Result<Unit> {
+        return runCatching {
+            repository.getUserByIdRemote()
+        }
     }
 }

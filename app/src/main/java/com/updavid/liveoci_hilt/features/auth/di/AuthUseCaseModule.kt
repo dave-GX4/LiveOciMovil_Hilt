@@ -16,7 +16,7 @@ object AuthUseCaseModule {
     fun providerAuthUseCases( repositry: AuthRepositry): AuthUseCases{
         return AuthUseCases(
             login = LoginUseCase(repositry),
-            registre = RegistreUseCase(repositry)
+            register = RegistreUseCase(repositry)
         )
     }
 }

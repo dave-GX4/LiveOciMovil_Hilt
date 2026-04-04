@@ -7,8 +7,8 @@ fun ScheduleEntity.toDomain() = Schedule(
     id,
     title,
     days,
-    start_time,
-    end_time,
+    startTime,
+    endTime,
     active,
     type
 )

@@ -8,7 +8,6 @@ data class UserEntity(
     @PrimaryKey val id: String,
     val name: String,
     val email: String,
-    val password: String,
     val notification: Boolean,
     val interests: List<String>,
     val topics: List<String>,

@@ -98,7 +98,7 @@ class RegisterViewModel @Inject constructor(
             val email = state.registerEmail
             val password = state.registerPassword
 
-            val result = authUseCases.registre(name, email, password)
+            val result = authUseCases.register(name, email, password)
 
             result.onSuccess { authMessage ->
                 _uiState.update { RegisterUiState(isRegisterSuccessful = true) }

@@ -59,7 +59,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun registre(
+    override suspend fun register(
         name: String,
         email: String,
         password: String

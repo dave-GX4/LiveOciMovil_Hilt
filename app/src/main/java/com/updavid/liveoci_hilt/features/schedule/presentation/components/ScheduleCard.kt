@@ -45,7 +45,7 @@ fun ScheduleCard(
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(24.dp) // Bordes bien redondeados como en el diseño
+        shape = RoundedCornerShape(24.dp)
     ) {
         Row(
             modifier = Modifier
@@ -53,16 +53,15 @@ fun ScheduleCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono circular a la izquierda
             Box(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE8F5E9)), // Un verde muy clarito
+                    .background(Color(0xFFE8F5E9)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.WorkOutline, // Puedes cambiarlo dinámicamente según el tipo
+                    imageVector = Icons.Default.WorkOutline,
                     contentDescription = null,
                     tint = Color(0xFF4CAF50)
                 )
@@ -70,15 +69,12 @@ fun ScheduleCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Textos centrales
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = schedule.title,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
-                // Formateamos los días y las horas (ej. Lun, Mié • 08:00 - 17:00)
-                // Aquí asumo que ya tienes una función para traducir tu List<Int> a texto
                 Text(
                     text = "Días • ${schedule.start_time} - ${schedule.end_time}",
                     color = Color.Gray,
@@ -86,7 +82,6 @@ fun ScheduleCard(
                 )
             }
 
-            // Acciones: Editar, Eliminar y Switch
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onEdit, modifier = Modifier.size(32.dp)) {
                     Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.Gray)
@@ -100,7 +95,7 @@ fun ScheduleCard(
                     onCheckedChange = onToggleActive,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF00E676) // Verde del diseño
+                        checkedTrackColor = Color(0xFF00E676)
                     )
                 )
             }

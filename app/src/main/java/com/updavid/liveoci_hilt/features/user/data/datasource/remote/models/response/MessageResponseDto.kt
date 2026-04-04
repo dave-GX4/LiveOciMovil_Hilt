@@ -2,5 +2,5 @@ package com.updavid.liveoci_hilt.features.user.data.datasource.remote.models.res
 
 data class MessageResponseDto(
     val message: String,
-    val status: Int
+    val status: Boolean
 )

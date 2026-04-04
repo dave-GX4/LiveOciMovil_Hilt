@@ -16,7 +16,6 @@ fun UserResponseDto.toEntity() = UserEntity(
     id,
     name,
     email,
-    password,
     notification,
     interests,
     topics,

@@ -9,7 +9,7 @@ class RegistreUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(name: String, email: String, password: String): Result<AuthMessage>{
         return try {
-            val response = repositry.registre(name, email, password)
+            val response = repositry.register(name, email, password)
 
             Result.success(response)
         }catch (e: Exception){

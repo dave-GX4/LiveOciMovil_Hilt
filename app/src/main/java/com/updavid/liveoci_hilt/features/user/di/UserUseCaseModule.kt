@@ -4,6 +4,7 @@ import com.updavid.liveoci_hilt.features.user.domain.repository.UserRepository
 import com.updavid.liveoci_hilt.features.user.domain.usescases.DeleteAccountUserUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.GetUserByIdRemoteUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.GetUserRoomUseCase
+import com.updavid.liveoci_hilt.features.user.domain.usescases.LogoutUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.UpdateEmailUserUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.UpdateNameUserUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.UpdatePasswordUserUseCase
@@ -26,7 +27,8 @@ object UserUseCaseModule {
             updateEmailUserUseCase = UpdateEmailUserUseCase(repository),
             updateNameUserUseCase = UpdateNameUserUseCase(repository),
             updatePasswordUserUseCase = UpdatePasswordUserUseCase(repository),
-            updateTastesUserUseCase = UpdateTastesUserUseCase(repository)
+            updateTastesUserUseCase = UpdateTastesUserUseCase(repository),
+            logout = LogoutUseCase(repository),
         )
     }
 }

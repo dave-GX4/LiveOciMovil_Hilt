@@ -9,6 +9,7 @@ import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.FormSchedule
 import com.updavid.liveoci_hilt.core.navigation.Home
 import com.updavid.liveoci_hilt.core.navigation.ListSchedules
+import com.updavid.liveoci_hilt.core.navigation.Profile
 import com.updavid.liveoci_hilt.features.home.presentation.page.HomePage
 import com.updavid.liveoci_hilt.features.home.presentation.viewmodel.HomeViewModel
 import javax.inject.Inject
@@ -24,8 +25,12 @@ class PresentationNavGraph @Inject constructor(): FeatureNavGraph {
             HomePage(
                 viewModel = viewmodel,
                 onActivities = {},
-                onProfile = {},
-                onHome = {},
+                onProfile = {
+                    navController.navigate(Profile)
+                },
+                onHome = {
+                    navController.navigate(Home)
+                },
                 onAnalysis = {},
                 onBored = {
                     navController.navigate(BoredActivity)

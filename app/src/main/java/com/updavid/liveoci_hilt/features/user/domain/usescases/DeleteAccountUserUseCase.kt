@@ -7,9 +7,9 @@ import javax.inject.Inject
 class DeleteAccountUserUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(id: String): Result<UserMessage>{
-        val response = repository.deleteAccountUser(id)
-
-        return Result.success(response)
+    suspend operator fun invoke(): Result<UserMessage> {
+        return runCatching {
+            repository.deleteAccountUser()
+        }
     }
 }

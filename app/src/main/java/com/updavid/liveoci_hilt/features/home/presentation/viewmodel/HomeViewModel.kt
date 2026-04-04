@@ -23,8 +23,8 @@ class HomeViewModel @Inject constructor(
 
     init {
         calculateGreeting()
+        observeUser()
         fetchRecommendedActivity()
-        // loadUserData()
     }
 
     private fun calculateGreeting() {
@@ -35,8 +35,15 @@ class HomeViewModel @Inject constructor(
             else -> "Buenas noches,"
         }
 
-        // Actualizamos el estado con el texto ya masticado para la UI
         _uiState.update { it.copy(greeting = greetingMessage) }
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            userUseCases.getUserRoom().collect { user ->
+                _uiState.update { it.copy(userName = user?.name) }
+            }
+        }
     }
 
     fun fetchRecommendedActivity() {

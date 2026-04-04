@@ -5,16 +5,16 @@ import com.updavid.liveoci_hilt.features.user.domain.entity.UserMessage
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun deleteAccountUser(id: String): UserMessage
-    suspend fun getUserByIdRemote(id: String)
+    suspend fun deleteAccountUser(): UserMessage
+    suspend fun getUserByIdRemote()
     fun getUserRoom(): Flow<User?>
-    suspend fun updateNameUser(id: String, name: String): UserMessage
-    suspend fun updateEmailUser(id: String, email: String): UserMessage
-    suspend fun updatePasswordUser(id: String, password: String): UserMessage
+    suspend fun updateNameUser(name: String): UserMessage
+    suspend fun updateEmailUser(email: String): UserMessage
+    suspend fun updatePasswordUser(password: String): UserMessage
     suspend fun updateTastesUser(
-        id: String,
         interests: List<String>,
         topics: List<String>,
         description: String
     ): UserMessage
+    suspend fun logoutLocal(): Result<Unit>
 }

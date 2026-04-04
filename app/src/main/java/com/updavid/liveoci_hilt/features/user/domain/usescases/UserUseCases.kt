@@ -7,5 +7,6 @@ data class UserUseCases(
     val updateEmailUserUseCase: UpdateEmailUserUseCase,
     val updateNameUserUseCase: UpdateNameUserUseCase,
     val updatePasswordUserUseCase: UpdatePasswordUserUseCase,
-    val updateTastesUserUseCase: UpdateTastesUserUseCase
+    val updateTastesUserUseCase: UpdateTastesUserUseCase,
+    val logout: LogoutUseCase,
 )

@@ -9,13 +9,11 @@ class UpdateTastesUserUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
     suspend operator fun invoke(
-        id: String,
         interests: List<String>,
         topics: List<String>,
         description: String): Result<UserMessage>{
         return try {
             val  response = repository.updateTastesUser(
-                id,
                 interests,
                 topics,
                 description

@@ -7,12 +7,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthLiveOciApi {
-    @POST("")
+    @POST("auth/singin")
     suspend fun postSingIn(
         @Body request: AuthSingIn
     ): AuthResponseDto
 
-    @POST("")
+    @POST("auth/singup")
     suspend fun postSingUp(
         @Body request: AuthSingUp
     ): AuthResponseDto
