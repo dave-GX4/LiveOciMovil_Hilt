@@ -1,5 +1,9 @@
 package com.updavid.liveoci_hilt.features.home.presentation.viewmodel
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.WbTwilight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.features.bored.domain.usecases.BoredActivitiesUseCases
@@ -29,13 +33,19 @@ class HomeViewModel @Inject constructor(
 
     private fun calculateGreeting() {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val greetingMessage = when (hour) {
-            in 6..11 -> "Buenos días,"
-            in 12..18 -> "Buenas tardes,"
-            else -> "Buenas noches,"
+
+        val (message, icon) = when (hour) {
+            in 6..11 -> "Buenos días," to Icons.Default.WbSunny
+            in 12..18 -> "Buenas tardes," to Icons.Default.WbTwilight
+            else -> "Buenas noches," to Icons.Default.NightsStay
         }
 
-        _uiState.update { it.copy(greeting = greetingMessage) }
+        _uiState.update {
+            it.copy(
+                greeting = message,
+                greetingIcon = icon
+            )
+        }
     }
 
     private fun observeUser() {

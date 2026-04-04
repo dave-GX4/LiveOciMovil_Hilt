@@ -19,7 +19,6 @@ class ProfileViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        refreshUserRemote()
         observeUserRoom()
     }
 
@@ -53,5 +52,13 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, isError = error.message) }
             }
         }
+    }
+
+    fun onNotificationToggled(enabled: Boolean) {
+        _uiState.update { it.copy(notificationStatus = enabled) }
+    }
+
+    fun onDarkModeToggled(enabled: Boolean) {
+        _uiState.update { it.copy(darkModeStatus = enabled) }
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.updavid.liveoci_hilt.features.user.presentation.components.HeaderProfileSection
 import com.updavid.liveoci_hilt.features.user.presentation.components.ProfileOptionItem
+import com.updavid.liveoci_hilt.features.user.presentation.components.ProfileSwitchItem
 import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +60,7 @@ fun ProfilePage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { },
+                title = { Text("Tu Perfil", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBackIosNew, null, modifier = Modifier.size(20.dp)) }
                 },
@@ -84,11 +85,12 @@ fun ProfilePage(
             ) {
                 HeaderProfileSection(
                     name = uiState.user?.name ?: "Usuario",
-                    email = uiState.user?.email ?: "usuario@ejemplo.com"
+                    email = uiState.user?.email ?: "usuario@ejemplo.com",
+                    ocio = uiState.user?.leisureType?: "Sin especificar"
                 )
 
                 Text(
-                    text = "Profile",
+                    text = "Seguridad",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -101,24 +103,28 @@ fun ProfilePage(
                 )
 
                 Text(
-                    text = "Settings",
+                    text = "Más Opciones",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
                 )
 
-                ProfileOptionItem(
+                ProfileSwitchItem(
                     icon = Icons.Default.NotificationsNone,
                     title = "Notificaciones",
-                    onClick = { /* Navegar */ },
+                    subtitle = "Recibe avisos sobre tus horarios",
+                    checked = uiState.notificationStatus,
+                    onCheckedChange = viewModel::onNotificationToggled,
                     iconColor = Color(0xFFF1EFFF),
                     iconTint = Color(0xFF6C63FF)
                 )
 
-                ProfileOptionItem(
+                ProfileSwitchItem(
                     icon = Icons.Default.DarkMode,
                     title = "Dark Mode",
-                    onClick = { /* Cambiar */ },
+                    subtitle = "Cambia el aspecto de la aplicación",
+                    checked = uiState.darkModeStatus,
+                    onCheckedChange = viewModel::onDarkModeToggled,
                     iconColor = Color(0xFFE3F2FD),
                     iconTint = Color(0xFF2196F3)
                 )

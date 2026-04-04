@@ -63,6 +63,7 @@ fun HomePage(
                 Spacer(modifier = Modifier.height(24.dp))
                 UserHeader(
                     greeting = uiState.greeting,
+                    greetingIcon = uiState.greetingIcon,
                     userName = uiState.userName,
                 )
 
@@ -113,8 +114,8 @@ fun HomePage(
                     if (newIndex != 2) selectedItemIndex = newIndex
                     when (newIndex) {
                         0 -> onHome()
-                        1 -> onActivities()
-                        2 -> onBored()
+                        1 -> onBored()
+                        2 -> onActivities()
                         3 -> onAnalysis()
                         4 -> onProfile()
                     }

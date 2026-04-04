@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun UserHeader(
     greeting: String,
+    greetingIcon: ImageVector,
     userName: String?
 ) {
     Row(
@@ -67,12 +69,23 @@ fun UserHeader(
             }
 
             Column {
-                Text(
-                    text = greeting,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = greeting,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Gray
+                    )
+                    Icon(
+                        imageVector = greetingIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = if (greeting.contains("noches")) Color(0xFF9FA8DA) else Color(0xFFFFB74D)
+                    )
+                }
                 Text(
                     text = userName ?: "Invitado",
                     fontSize = 20.sp,

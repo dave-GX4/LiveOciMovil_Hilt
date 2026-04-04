@@ -96,7 +96,7 @@ fun ProfileEditPage(
                             Icon(Icons.Default.ArrowBackIosNew, null, modifier = Modifier.size(20.dp))
                         }
                     },
-                    title = { Text("Información de cuenta", fontWeight = FontWeight.Bold) }
+                    title = { Text("Información y Seguridad de cuenta", fontWeight = FontWeight.Bold) }
                 )
             }
         ) { paddingValues ->

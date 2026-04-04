@@ -5,10 +5,12 @@ import com.updavid.liveoci_hilt.features.user.domain.entity.User
 data class ProfileUiState(
     val isError: String? = null,
     val isSuccess: String? = null,
+
     val user: User? = null,
+
+    val notificationStatus: Boolean = true,
+    val darkModeStatus: Boolean = false,
+
     val isLoading: Boolean = false,
     val isRefresh: Boolean = false,
-    val isUpdate: Boolean = false,
-    val isDelete: Boolean = false,
-    val notificationStatus: Boolean = true
 )

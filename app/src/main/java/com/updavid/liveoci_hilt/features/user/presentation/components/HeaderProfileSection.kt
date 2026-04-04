@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.updavid.liveoci_hilt.R
 
 @Composable
-fun HeaderProfileSection(name: String, email: String) {
+fun HeaderProfileSection(name: String, email: String, ocio: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,6 +73,12 @@ fun HeaderProfileSection(name: String, email: String) {
             )
             Text(
                 text = email,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            Text(
+                text = ocio,
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 4.dp)
