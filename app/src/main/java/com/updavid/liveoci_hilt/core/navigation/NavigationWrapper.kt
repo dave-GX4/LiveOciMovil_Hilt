@@ -29,7 +29,8 @@ fun NavigationWrapper(
     val showBottomBar = currentDestination?.let { dest ->
         dest.hasRoute(Home::class) ||
                 dest.hasRoute(BoredActivity::class) ||
-                // dest.hasRoute(FormSchedule::class) || // ¿Quizás esta es la central?
+                // dest.hasRoute(FormSchedule::class) ||
+                dest.hasRoute(Analyzer::class) ||
                 dest.hasRoute(Profile::class)
     } ?: false
 
@@ -37,13 +38,12 @@ fun NavigationWrapper(
         currentDestination?.hasRoute(Home::class) == true -> 0
         currentDestination?.hasRoute(BoredActivity::class) == true -> 1
         // currentDestination?.hasRoute(TusActividades::class) == true -> 2
-        // currentDestination?.hasRoute(Analysis::class) == true -> 3
+        currentDestination?.hasRoute(Analyzer::class) == true -> 3
         currentDestination?.hasRoute(Profile::class) == true -> 4
         else -> 0
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Tu NavHost ocupa TODA la pantalla, no le damos padding.
         NavHost(
             navController = navController,
             startDestination = Splash
@@ -53,7 +53,6 @@ fun NavigationWrapper(
             }
         }
 
-        // 4. Mostrar el BottomBar flotante encima del NavHost
         AnimatedVisibility(
             visible = showBottomBar,
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -76,12 +75,11 @@ fun NavigationWrapper(
                     val route: Any = when (newIndex) {
                         0 -> Home
                         1 -> BoredActivity
-                        // 3 -> Analysis
+                        3 -> Analyzer
                         4 -> Profile
                         else -> Home
                     }
 
-                    // Navegación estándar de BottomBar para evitar apilar vistas infinitamente
                     navController.navigate(route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true

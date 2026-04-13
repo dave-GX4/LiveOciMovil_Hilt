@@ -20,4 +20,6 @@ object Tastes
 @Serializable
 object BoredActivity
 @Serializable
+object Analyzer
+@Serializable
 object Splash

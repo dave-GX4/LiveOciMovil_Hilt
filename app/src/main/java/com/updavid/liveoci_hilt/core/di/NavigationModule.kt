@@ -1,6 +1,7 @@
 package com.updavid.liveoci_hilt.core.di
 
 import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
+import com.updavid.liveoci_hilt.features.analyzer.navigation.AnalyzerNavGraph
 import com.updavid.liveoci_hilt.features.user.navigation.UserNavGraph
 import com.updavid.liveoci_hilt.features.auth.navigation.AuthNavGraph
 import com.updavid.liveoci_hilt.features.bored.navigation.BoredActivitiesNavGraph
@@ -43,5 +44,11 @@ abstract class NavigationModule {
     @IntoSet
     abstract fun bindBoredActivities(
         boredActivitiesNavGraph: BoredActivitiesNavGraph
+    ): FeatureNavGraph
+
+    @Binds
+    @IntoSet
+    abstract fun bindAnalyzer(
+        analyzerNavGraph: AnalyzerNavGraph
     ): FeatureNavGraph
 }
