@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -36,91 +38,75 @@ import com.updavid.liveoci_hilt.features.home.presentation.viewmodel.HomeViewMod
 
 @Composable
 fun HomePage(
-    viewModel: HomeViewModel,
-    onActivities: () -> Unit,
-    onProfile: () -> Unit,
-    onHome: () -> Unit,
-    onAnalysis: () -> Unit,
-    onBored: () -> Unit
+    viewModel: HomeViewModel
 ) {
-    var selectedItemIndex by remember { mutableIntStateOf(0) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        Box(
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
+                .padding(horizontal = 24.dp)
+                .verticalScroll(scrollState)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            UserHeader(
+                greeting = uiState.greeting,
+                greetingIcon = uiState.greetingIcon,
+                userName = uiState.userName,
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
-                UserHeader(
-                    greeting = uiState.greeting,
-                    greetingIcon = uiState.greetingIcon,
-                    userName = uiState.userName,
+                Text(
+                    text = "Recomendado para ti",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
+                Text(
+                    text = "Actualizar",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { viewModel.fetchRecommendedActivity() }
+                )
+            }
 
-                Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Recomendado para ti",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "Actualizar",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { viewModel.fetchRecommendedActivity() }
-                    )
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                when {
-                    uiState.isLoading -> {
-                        Box(modifier = Modifier.fillMaxWidth().height(160.dp), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                    uiState.isError != null -> {
-                        Text(text = "Error al cargar la recomendación.", color = Color.Red)
-                    }
-                    uiState.recommendedActivity != null -> {
-                        RecommendedCard(activity = uiState.recommendedActivity!!)
-                    }
+                uiState.isError != null -> {
+                    Text(text = "Error al cargar la recomendación.", color = Color.Red)
+                }
+                uiState.recommendedActivity != null -> {
+                    RecommendedCard(activity = uiState.recommendedActivity!!)
                 }
             }
 
-            BottomNavigationBar(
-                selectedIndex = selectedItemIndex,
-                appBackgroundColor = MaterialTheme.colorScheme.background,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                onItemSelected = { newIndex ->
-                    if (newIndex != 2) selectedItemIndex = newIndex
-                    when (newIndex) {
-                        0 -> onHome()
-                        1 -> onBored()
-                        2 -> onActivities()
-                        3 -> onAnalysis()
-                        4 -> onProfile()
-                    }
-                }
-            )
+            Spacer(modifier = Modifier.height(130.dp))
         }
     }
 }

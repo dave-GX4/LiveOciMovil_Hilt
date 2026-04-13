@@ -22,20 +22,7 @@ class PresentationNavGraph @Inject constructor(): FeatureNavGraph {
         navGraphBuilder.composable<Home>{
             val viewmodel: HomeViewModel = hiltViewModel()
 
-            HomePage(
-                viewModel = viewmodel,
-                onActivities = {},
-                onProfile = {
-                    navController.navigate(Profile)
-                },
-                onHome = {
-                    navController.navigate(Home)
-                },
-                onAnalysis = {},
-                onBored = {
-                    navController.navigate(BoredActivity)
-                }
-            )
+            HomePage(viewModel = viewmodel)
         }
     }
 }

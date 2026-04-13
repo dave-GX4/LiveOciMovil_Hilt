@@ -23,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.updavid.liveoci_hilt.core.ui.atoms.SectionTitle
 import com.updavid.liveoci_hilt.features.user.presentation.components.HeaderProfileSection
 import com.updavid.liveoci_hilt.features.user.presentation.components.ProfileOptionItem
 import com.updavid.liveoci_hilt.features.user.presentation.components.ProfileSwitchItem
@@ -50,6 +52,7 @@ fun ProfilePage(
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess == "Sesión cerrada") {
@@ -62,7 +65,9 @@ fun ProfilePage(
             TopAppBar(
                 title = { Text("Tu Perfil", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBackIosNew, null, modifier = Modifier.size(20.dp)) }
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBackIosNew, null, modifier = Modifier.size(20.dp))
+                    }
                 },
                 actions = {
                     IconButton(onClick = { }) { Icon(Icons.Default.MoreVert, null) }
@@ -89,11 +94,33 @@ fun ProfilePage(
                     ocio = uiState.user?.leisureType?: "Sin especificar"
                 )
 
-                Text(
-                    text = "Seguridad",
-                    fontWeight = FontWeight.Bold,
+                SectionTitle(
+                    text = "Más Opciones",
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+                )
+                ProfileOptionItem(
+                    icon = Icons.Default.FavoriteBorder,
+                    title = "Mis Gustos",
+                    onClick = { /* Navegar */ },
+                    iconColor = Color(0xFFFFF0F3),
+                    iconTint = Color(0xFFFF4D6D)
+                )
+
+                ProfileOptionItem(
+                    icon = Icons.Default.Schedule,
+                    title = "Mis Horarios",
+                    onClick = { /* Navegar */ },
+                    iconColor = Color(0xFFE8F5E9),
+                    iconTint = Color(0xFF4CAF50)
+                )
+
+                SectionTitle(
+                    text = "Seguridad y Privacidad",
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
                 )
 
                 ProfileOptionItem(
@@ -102,10 +129,10 @@ fun ProfilePage(
                     onClick = onNavigateToEditInterests
                 )
 
-                Text(
-                    text = "Más Opciones",
-                    fontWeight = FontWeight.Bold,
+                SectionTitle(
+                    text = "Configuraciones de app",
                     fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
                 )
 
@@ -129,29 +156,12 @@ fun ProfilePage(
                     iconTint = Color(0xFF2196F3)
                 )
 
-                ProfileOptionItem(
-                    icon = Icons.Default.FavoriteBorder,
-                    title = "Mis Gustos",
-                    onClick = { /* Navegar */ },
-                    iconColor = Color(0xFFFFF0F3),
-                    iconTint = Color(0xFFFF4D6D)
-                )
-
-                ProfileOptionItem(
-                    icon = Icons.Default.Schedule,
-                    title = "Mis Horarios",
-                    onClick = { /* Navegar */ },
-                    iconColor = Color(0xFFE8F5E9),
-                    iconTint = Color(0xFF4CAF50)
-                )
-
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
                     onClick = viewModel::onLogout,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF3F4F9)),
                     shape = RoundedCornerShape(12.dp),
@@ -164,8 +174,7 @@ fun ProfilePage(
                         fontSize = 14.sp
                     )
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(130.dp))
             }
         }
     }

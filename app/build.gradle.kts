@@ -79,7 +79,7 @@ dependencies {
     // Retrofit
     implementation(libs.com.squareup.retrofit2.retrofit)
     // JSON
-    implementation(libs.com.squareup.retrofit2.converter.json)
+    implementation(libs.com.squareup.retrofit2.converter.gson)
     // Coil
     implementation(libs.io.coil.kt.coil.compose)
     // Navigation

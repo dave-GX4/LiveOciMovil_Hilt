@@ -8,8 +8,6 @@ import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.Login
 import com.updavid.liveoci_hilt.core.navigation.Profile
 import com.updavid.liveoci_hilt.core.navigation.ProfileEdit
-import com.updavid.liveoci_hilt.core.navigation.Splash
-import com.updavid.liveoci_hilt.core.navigation.Tastes
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileEditPage
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfilePage
 import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileEditViewModel

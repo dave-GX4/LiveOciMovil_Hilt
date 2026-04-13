@@ -80,28 +80,24 @@ fun BoredActivityPage(
         topBar = {
             TopAppBar(
                 title = { Text("Actividades", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
+                actions = {
+                    IconButton(onClick = { viewModel.loadActivitiesBored() }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Recargar",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.loadActivitiesBored() },
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = MaterialTheme.colorScheme.primary,
-                shape = CircleShape
-            ) {
-                Icon(Icons.Default.Refresh, contentDescription = "Recargar")
-            }
         }
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(
-                modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.1f)),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -111,8 +107,8 @@ fun BoredActivityPage(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(bottom = 80.dp)
+                .padding(top = paddingValues.calculateTopPadding()),
+            contentPadding = PaddingValues(bottom = 130.dp)
         ) {
             item {
                 Column(
@@ -211,7 +207,9 @@ fun BoredActivityPage(
                 item {
                     Text(
                         text = "No se encontraron actividades.",
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
                         color = Color.Gray
                     )
                 }
