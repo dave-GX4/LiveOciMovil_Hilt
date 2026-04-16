@@ -1,8 +1,7 @@
 package com.updavid.liveoci_hilt.core.system.domain.entity
 
-data class AppUsageInfo(
+data class SystemAppUsage(
     val packageName: String,
     val appName: String,
-    val timeSpentMillis: Long,
-    val categoryName: String
+    val timeSpentMillis: Long
 )

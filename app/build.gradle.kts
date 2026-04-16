@@ -43,6 +43,13 @@ android {
         buildConfig = true
         resValues = true
     }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets")
+            }
+        }
+    }
 }
 
 try {
@@ -92,6 +99,8 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     //DataStore Preferences
     implementation(libs.androidx.datastore.preferences)
+    //Serializable
+    implementation(libs.kotlinx.serialization.json)
     // KSP
     ksp(libs.hilt.compiler)
 

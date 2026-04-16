@@ -4,6 +4,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import com.updavid.liveoci_hilt.core.system.domain.entity.AppUsageInfo
+import com.updavid.liveoci_hilt.core.system.domain.entity.SystemAppUsage
 import com.updavid.liveoci_hilt.core.system.domain.service.AppUsageTracker
 import java.util.Calendar
 import javax.inject.Inject
@@ -11,7 +12,7 @@ import javax.inject.Inject
 class AppUsageTrackerImpl @Inject constructor(
     private val context: Context
 ) : AppUsageTracker {
-    override suspend fun getUsageStatsForToday(): List<AppUsageInfo> {
+    override suspend fun getUsageStatsForToday(): List<SystemAppUsage> {
         val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         val packageManager = context.packageManager
 
@@ -31,9 +32,8 @@ class AppUsageTrackerImpl @Inject constructor(
         )
 
         return usageStatsList
-            .filter { it.totalTimeInForeground > 0 } // Solo apps que se usaron
+            .filter { it.totalTimeInForeground > 0 }
             .map { usageStats ->
-                // Intentamos sacar el nombre legible de la app (ej: "TikTok" en vez de "com.zhiliaoapp.musically")
                 val appName = try {
                     val appInfo = packageManager.getApplicationInfo(usageStats.packageName, 0)
                     packageManager.getApplicationLabel(appInfo).toString()
@@ -41,13 +41,14 @@ class AppUsageTrackerImpl @Inject constructor(
                     usageStats.packageName
                 }
 
-                AppUsageInfo(
+                // Devolvemos el modelo crudo, que no pide categoría
+                SystemAppUsage(
                     packageName = usageStats.packageName,
                     appName = appName,
                     timeSpentMillis = usageStats.totalTimeInForeground
                 )
             }
-            .sortedByDescending { it.timeSpentMillis } // Ordenamos de mayor a menor uso
+            .sortedByDescending { it.timeSpentMillis }
     }
 
     override fun hasUsagePermission(): Boolean {

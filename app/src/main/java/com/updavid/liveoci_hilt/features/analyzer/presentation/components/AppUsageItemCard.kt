@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,13 +69,12 @@ fun AppUsageItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Icono Placeholder (En una app real aquí usarías Coil + PackageManager para el icono real)
-                Box(
-                    modifier = Modifier.size(48.dp).background(Color(0xFFE0E7FF), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Default.Android, contentDescription = null, tint = Color(0xFF6366F1))
-                }
+                AppIcon(
+                    packageName = appInfo.packageName,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
 
                 Spacer(modifier = Modifier.width(16.dp))
 

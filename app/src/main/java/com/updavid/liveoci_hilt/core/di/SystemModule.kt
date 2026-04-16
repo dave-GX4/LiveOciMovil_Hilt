@@ -1,7 +1,9 @@
 package com.updavid.liveoci_hilt.core.di
 
 import android.content.Context
+import com.updavid.liveoci_hilt.core.system.data.serviceImpl.AppDictionaryProviderImpl
 import com.updavid.liveoci_hilt.core.system.data.serviceImpl.AppUsageTrackerImpl
+import com.updavid.liveoci_hilt.core.system.domain.service.AppDictionaryProvider
 import com.updavid.liveoci_hilt.core.system.domain.service.AppUsageTracker
 import dagger.Module
 import dagger.Provides
@@ -20,5 +22,13 @@ object SystemModule {
         @ApplicationContext context: Context
     ): AppUsageTracker {
         return AppUsageTrackerImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDictionaryProvider(
+        @ApplicationContext context: Context
+    ): AppDictionaryProvider {
+        return AppDictionaryProviderImpl(context)
     }
 }

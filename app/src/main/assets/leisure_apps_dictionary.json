@@ -1,0 +1,142 @@
+{
+  "com.zhiliaoapp.musically": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.instagram.android": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.google.android.youtube": {
+    "categoryName": "Video y Música",
+    "isLeisure": true
+  },
+  "com.mercadolibre": {
+    "categoryName": "Compras",
+    "isLeisure": true
+  },
+  "com.freereels.app":{
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.wbd.stream":{
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "tv.twitch.android": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.crunchyroll.crunchyroid": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.netflix.mediaclient":{
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.apple.atve.androidtv.appletv": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.disney.disneyplus": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.discord": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.pinterest": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.facebook.katana": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.twitter.android": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.netshort.abroad": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.zhiliaoapp.musically.go": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.zzkko": {
+    "categoryName": "Compras",
+    "isLeisure": true
+  },
+  "com.tubitv": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "tv.pluto.android": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.alibaba.aliexpresshd": {
+    "categoryName": "Compras",
+    "isLeisure": true
+  },
+  "com.storymatrix.drama": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.dramawave.app": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.cbs.ca": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.amazon.avod.thirdpartyclient": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "live.shorttv.apps": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.univision.prendetv": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.walmart.mg": {
+    "categoryName": "Compras",
+    "isLeisure": true
+  },
+  "com.einnovation.temu": {
+    "categoryName": "Compras",
+    "isLeisure": true
+  },
+  "com.snapchat.android": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "wp.wattpad": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.graymatrix.did": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  },
+  "com.instagram.barcelona": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.tumblr": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.kick.mobile": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
+  }
+}
