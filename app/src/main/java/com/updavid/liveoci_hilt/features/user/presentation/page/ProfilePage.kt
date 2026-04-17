@@ -47,8 +47,9 @@ import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileView
 @Composable
 fun ProfilePage(
     viewModel: ProfileViewModel,
+    onNavigateTastes: () -> Unit,
     onNavigateToEditInterests: () -> Unit,
-    onLogoutSuccess: () -> Unit ,
+    onLogoutSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -103,7 +104,7 @@ fun ProfilePage(
                 ProfileOptionItem(
                     icon = Icons.Default.FavoriteBorder,
                     title = "Mis Gustos",
-                    onClick = { /* Navegar */ },
+                    onClick = onNavigateTastes,
                     iconColor = Color(0xFFFFF0F3),
                     iconTint = Color(0xFFFF4D6D)
                 )

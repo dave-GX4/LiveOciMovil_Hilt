@@ -8,10 +8,13 @@ import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.Login
 import com.updavid.liveoci_hilt.core.navigation.Profile
 import com.updavid.liveoci_hilt.core.navigation.ProfileEdit
+import com.updavid.liveoci_hilt.core.navigation.Tastes
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileEditPage
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfilePage
+import com.updavid.liveoci_hilt.features.user.presentation.page.TastesPage
 import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileEditViewModel
 import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileViewModel
+import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.TastesViewModel
 import javax.inject.Inject
 
 class UserNavGraph @Inject constructor(): FeatureNavGraph {
@@ -34,6 +37,9 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
                         launchSingleTop = true
                     }
                 },
+                onNavigateTastes = {
+                    navController.navigate(Tastes)
+                },
                 onBack = {
                     navController.navigateUp()
                 }
@@ -51,6 +57,17 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        navGraphBuilder.composable<Tastes> {
+            val viewModel: TastesViewModel = hiltViewModel()
+
+            TastesPage(
+                viewModel = viewModel,
+                onNavigateBack = {
+                    navController.navigateUp()
                 }
             )
         }
