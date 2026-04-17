@@ -40,7 +40,7 @@ import com.updavid.liveoci_hilt.core.system.domain.entity.AppUsageInfo
 
 @Composable
 fun AppUsageItemCard(
-    appInfo: AppUsageInfo, // Tu modelo de dominio
+    appInfo: AppUsageInfo,
     maxUsageMillis: Long,
     animationDelay: Int
 ) {
@@ -80,7 +80,7 @@ fun AppUsageItemCard(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = appInfo.appName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Text(text = "App del sistema", fontSize = 12.sp, color = Color.Gray) // Aquí podrías mapear categorías reales
+                    Text(text = appInfo.categoryName, fontSize = 12.sp, color = Color.Gray)
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
@@ -96,13 +96,13 @@ fun AppUsageItemCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
-                    .background(Color(0xFFF3F4F6), CircleShape)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(fraction = animatedProgress)
                         .height(8.dp)
-                        .background(Color(0xFF10B981), CircleShape) // Verde
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
             }
         }
