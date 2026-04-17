@@ -125,16 +125,16 @@ class FormScheduleViewModel @Inject constructor(
                 val id = state.id
                 val title = state.title.trim()
                 val days = state.days
-                val start_time = state.startTime
-                val end_time = state.endTime
+                val startTime = state.startTime
+                val endTime = state.endTime
                 val active = state.isActive
 
                 scheduleUseCases.updateSchedule(
                     id,
                     title,
                     days,
-                    start_time,
-                    end_time,
+                    startTime,
+                    endTime,
                     active
                 )
             }

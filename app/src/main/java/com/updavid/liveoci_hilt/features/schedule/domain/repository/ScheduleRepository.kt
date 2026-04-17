@@ -8,8 +8,8 @@ interface ScheduleRepository {
     suspend fun addSchedule(
         title: String,
         days: List<Int>,
-        start_time: String,
-        end_time: String,
+        startTime: String,
+        endTime: String,
         active: Boolean,
         type: String
     ): ScheduleMessage
@@ -17,8 +17,8 @@ interface ScheduleRepository {
         id: String,
         title: String,
         days: List<Int>,
-        start_time: String,
-        end_time: String,
+        startTime: String,
+        endTime: String,
         active: Boolean
     ): ScheduleMessage
     suspend fun getAllSchedulesRemote()

@@ -11,13 +11,20 @@ class AddScheduleUseCase @Inject constructor(
     suspend operator fun invoke(
         title: String,
         days: List<Int>,
-        start_time: String,
-        end_time: String,
+        startTime: String,
+        endTime: String,
         active: Boolean,
         type: String
     ): Result<ScheduleMessage>{
         return try {
-            val response = repository.addSchedule(title, days, start_time, end_time, active, type)
+            val response = repository.addSchedule(
+                title,
+                days,
+                startTime,
+                endTime,
+                active,
+                type
+            )
 
             Result.success(response)
         }catch (e: Exception){

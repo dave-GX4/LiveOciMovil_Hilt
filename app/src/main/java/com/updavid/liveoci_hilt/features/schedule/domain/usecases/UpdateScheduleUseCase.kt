@@ -11,8 +11,8 @@ class UpdateScheduleUseCase @Inject constructor(
         id: String,
         title: String,
         days: List<Int>,
-        start_time: String,
-        end_time: String,
+        startTime: String,
+        endTime: String,
         active: Boolean
     ): Result<ScheduleMessage>{
         return try {
@@ -20,8 +20,8 @@ class UpdateScheduleUseCase @Inject constructor(
                 id,
                 title,
                 days,
-                start_time,
-                end_time,
+                startTime,
+                endTime,
                 active
             )
 
