@@ -138,5 +138,21 @@
   "com.kick.mobile": {
     "categoryName": "Entretenimiento",
     "isLeisure": true
+  },
+  "com.xingin.xhs": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.instagram.lite": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.reddit.frontpage": {
+    "categoryName": "Redes Sociales",
+    "isLeisure": true
+  },
+  "com.newreading.goodreels": {
+    "categoryName": "Entretenimiento",
+    "isLeisure": true
   }
 }

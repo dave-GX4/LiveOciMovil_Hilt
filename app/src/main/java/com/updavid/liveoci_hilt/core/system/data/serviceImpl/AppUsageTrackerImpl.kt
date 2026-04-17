@@ -33,19 +33,24 @@ class AppUsageTrackerImpl @Inject constructor(
 
         return usageStatsList
             .filter { it.totalTimeInForeground > 0 }
-            .map { usageStats ->
+            // Agrupamos todos los registros que tengan el mismo package name
+            .groupBy { it.packageName }
+            // Mapeamos cada grupo para sumar sus tiempos
+            .map { (packageName, statsList) ->
+                // Sumamos el tiempo de todos los pedazos de esta app
+                val totalTime = statsList.sumOf { it.totalTimeInForeground }
+
                 val appName = try {
-                    val appInfo = packageManager.getApplicationInfo(usageStats.packageName, 0)
+                    val appInfo = packageManager.getApplicationInfo(packageName, 0)
                     packageManager.getApplicationLabel(appInfo).toString()
                 } catch (e: PackageManager.NameNotFoundException) {
-                    usageStats.packageName
+                    packageName
                 }
 
-                // Devolvemos el modelo crudo, que no pide categoría
                 SystemAppUsage(
-                    packageName = usageStats.packageName,
+                    packageName = packageName,
                     appName = appName,
-                    timeSpentMillis = usageStats.totalTimeInForeground
+                    timeSpentMillis = totalTime
                 )
             }
             .sortedByDescending { it.timeSpentMillis }
