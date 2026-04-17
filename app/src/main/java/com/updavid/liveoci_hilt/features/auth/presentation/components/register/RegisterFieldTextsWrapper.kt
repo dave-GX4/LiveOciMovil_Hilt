@@ -112,7 +112,7 @@ fun RegisterFieldTextsWrapper(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Siguiente", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("Registrarse", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }
