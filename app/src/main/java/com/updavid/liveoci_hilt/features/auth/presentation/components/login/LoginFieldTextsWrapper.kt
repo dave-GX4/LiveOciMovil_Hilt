@@ -73,7 +73,7 @@ fun LoginFieldTextsWrapper(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Finalizar Registro", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("Iniciar", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }
