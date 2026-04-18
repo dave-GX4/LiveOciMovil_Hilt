@@ -66,10 +66,16 @@ class UserRepositoryImpl @Inject constructor(
                 ?: throw Exception("Sesión no válida")
 
             val remoteUser = api.getUserById(userId)
-
             dao.saveOrUpdateUser(remoteUser.toEntity())
 
         } catch (e: HttpException) {
+            val code = e.code()
+
+            if (code == 404 || code == 401) {
+                logoutLocal()
+                throw Exception("Tu sesión ha expirado o la cuenta ya no existe. Inicia sesión de nuevo.")
+            }
+
             val errorJsonString = e.response()?.errorBody()?.string()
             val errorMessage = try {
                 JSONObject(errorJsonString).getString("message")
@@ -77,7 +83,6 @@ class UserRepositoryImpl @Inject constructor(
                 "Error desconocido del servidor."
             }
             throw Exception(errorMessage)
-
         } catch (e: IOException) {
             throw Exception("Error de conexión, revisa tu internet.")
         } catch (e: Exception) {

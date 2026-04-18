@@ -48,6 +48,7 @@ import com.updavid.liveoci_hilt.features.user.presentation.viewmodel.ProfileView
 fun ProfilePage(
     viewModel: ProfileViewModel,
     onNavigateTastes: () -> Unit,
+    onNavigateSchedules: () -> Unit,
     onNavigateToEditInterests: () -> Unit,
     onLogoutSuccess: () -> Unit,
     onBack: () -> Unit
@@ -112,7 +113,7 @@ fun ProfilePage(
                 ProfileOptionItem(
                     icon = Icons.Default.Schedule,
                     title = "Mis Horarios",
-                    onClick = { /* Navegar */ },
+                    onClick = onNavigateSchedules,
                     iconColor = Color(0xFFE8F5E9),
                     iconTint = Color(0xFF4CAF50)
                 )

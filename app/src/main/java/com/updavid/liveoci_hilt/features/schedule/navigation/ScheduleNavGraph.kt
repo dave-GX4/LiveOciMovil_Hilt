@@ -6,11 +6,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.FormSchedule
-import com.updavid.liveoci_hilt.core.navigation.ListSchedules
+import com.updavid.liveoci_hilt.core.navigation.Schedules
 import com.updavid.liveoci_hilt.features.schedule.presentation.pages.FormSchedulePage
-import com.updavid.liveoci_hilt.features.schedule.presentation.pages.ListSchedulesPage
+import com.updavid.liveoci_hilt.features.schedule.presentation.pages.SchedulesPage
 import com.updavid.liveoci_hilt.features.schedule.presentation.viewmodels.FormScheduleViewModel
-import com.updavid.liveoci_hilt.features.schedule.presentation.viewmodels.ListSchedulesViewModel
+import com.updavid.liveoci_hilt.features.schedule.presentation.viewmodels.SchedulesViewModel
 import javax.inject.Inject
 
 class ScheduleNavGraph @Inject constructor(): FeatureNavGraph {
@@ -27,17 +27,17 @@ class ScheduleNavGraph @Inject constructor(): FeatureNavGraph {
                     navController.navigateUp()
                 },
                 onSuccessSaved = {
-                    navController.navigate(ListSchedules) {
+                    navController.navigate(Schedules) {
                         popUpTo<FormSchedule> { inclusive = true }
                     }
                 }
             )
         }
 
-        navGraphBuilder.composable<ListSchedules> {
-            val viewModel: ListSchedulesViewModel = hiltViewModel()
+        navGraphBuilder.composable<Schedules> {
+            val viewModel: SchedulesViewModel = hiltViewModel()
 
-            ListSchedulesPage(
+            SchedulesPage(
                 viewModel = viewModel,
                 onFormAdd = {
                     navController.navigate(FormSchedule)

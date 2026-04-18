@@ -10,7 +10,7 @@ object Home
 @Serializable
 object FormSchedule
 @Serializable
-object ListSchedules
+object Schedules
 @Serializable
 object Profile
 @Serializable

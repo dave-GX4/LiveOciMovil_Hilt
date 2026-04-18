@@ -1,7 +1,7 @@
 package com.updavid.liveoci_hilt.features.schedule.domain.entity
 
 data class Schedule(
-    val id: String,
+    val uuid: String,
     val title: String,
     val days: List<Int>,
     val startTime: String,

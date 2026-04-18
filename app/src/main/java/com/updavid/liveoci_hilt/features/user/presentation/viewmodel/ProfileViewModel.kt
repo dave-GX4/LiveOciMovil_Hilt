@@ -19,6 +19,7 @@ class ProfileViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        refreshUserRemote()
         observeUserRoom()
     }
 

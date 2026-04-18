@@ -22,6 +22,8 @@ interface ScheduleRepository {
         active: Boolean
     ): ScheduleMessage
     suspend fun getAllSchedulesRemote()
+    suspend fun deleteSchedule(id: String): ScheduleMessage
     fun getAllSchedulesRoom(): Flow<List<Schedule>>
-    //suspend fun getScheduleRoom(): Flow<Schedule?>
+    fun getScheduleByIdRoom(id: String): Flow<Schedule?>
+    fun getScheduleByTypeRoom(type: String): Flow<Schedule?>
 }
