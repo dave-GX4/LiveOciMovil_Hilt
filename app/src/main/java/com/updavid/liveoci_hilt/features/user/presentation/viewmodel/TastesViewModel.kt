@@ -28,10 +28,19 @@ class TastesViewModel @Inject constructor(
             useCases.getUserRoom().collect { user ->
                 user?.let {
                     _uiState.update { currentState ->
+
+                        val textToRemove = "No has agregado ningun interes"
+                        val cleanInterests = it.interests.filter { interest ->
+                            interest != textToRemove
+                        }
+
+                        val updatedAvailableInterests = (currentState.availableInterests + cleanInterests).distinct()
+
                         currentState.copy(
-                            interests = it.interests,
+                            interests = cleanInterests,
                             topics = it.topics,
-                            description = it.description
+                            description = it.description,
+                            availableInterests = updatedAvailableInterests
                         )
                     }
                 }
@@ -75,6 +84,20 @@ class TastesViewModel @Inject constructor(
                     interests = newSelected,
                     isChanged = true
                 )
+            }
+        }
+    }
+
+    fun onRemoveCustomInterest(interestToRemove: String) {
+        _uiState.update { currentState ->
+            if (!currentState.defaultInterests.contains(interestToRemove)) {
+                currentState.copy(
+                    availableInterests = currentState.availableInterests - interestToRemove,
+                    interests = currentState.interests - interestToRemove,
+                    isChanged = true
+                )
+            } else {
+                currentState
             }
         }
     }

@@ -222,10 +222,15 @@ fun TastesPage(
                     if (state.isEditing) {
                         state.availableInterests.forEach { interest ->
                             val isSelected = state.interests.contains(interest)
+                            val isDefault = state.defaultInterests.contains(interest)
+
                             CustomChip(
                                 text = interest,
                                 isSelected = isSelected,
-                                onClick = { viewModel.onToggleInterest(interest) }
+                                onClick = { viewModel.onToggleInterest(interest) },
+                                onDelete = if (!isDefault) {
+                                    { viewModel.onRemoveCustomInterest(interest) }
+                                } else null
                             )
                         }
 
