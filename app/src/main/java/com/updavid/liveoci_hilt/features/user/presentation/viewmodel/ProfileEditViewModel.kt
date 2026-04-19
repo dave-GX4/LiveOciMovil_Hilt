@@ -2,7 +2,7 @@ package com.updavid.liveoci_hilt.features.user.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.updavid.liveoci_hilt.features.user.domain.entity.UserMessage
+import com.updavid.liveoci_hilt.features.user.domain.entity.Message
 import com.updavid.liveoci_hilt.features.user.domain.usescases.UserUseCases
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileEditUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -106,7 +106,7 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    private fun performUpdate(call: suspend () -> Result<UserMessage>) {
+    private fun performUpdate(call: suspend () -> Result<Message>) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isError = null, isSuccess = null) }
             call().onSuccess { message ->

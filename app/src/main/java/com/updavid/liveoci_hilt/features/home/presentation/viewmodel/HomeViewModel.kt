@@ -26,9 +26,22 @@ class HomeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        getUserRemote()
         calculateGreeting()
         observeUser()
         fetchRecommendedActivity()
+    }
+
+    private fun getUserRemote(){
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, isError = null) }
+
+            userUseCases.getUserByIdRemoteUseCase().onFailure { error ->
+                _uiState.update { it.copy(isError = error.message) }
+            }
+
+            _uiState.update { it.copy(isLoading = false) }
+        }
     }
 
     private fun calculateGreeting() {
