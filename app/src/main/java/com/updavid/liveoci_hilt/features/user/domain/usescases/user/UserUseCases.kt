@@ -1,4 +1,4 @@
-package com.updavid.liveoci_hilt.features.user.domain.usescases
+package com.updavid.liveoci_hilt.features.user.domain.usescases.user
 
 data class UserUseCases(
     val deleteAccountUser: DeleteAccountUserUseCase,

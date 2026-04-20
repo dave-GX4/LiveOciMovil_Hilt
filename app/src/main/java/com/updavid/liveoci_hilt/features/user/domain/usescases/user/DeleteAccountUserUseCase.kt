@@ -1,4 +1,4 @@
-package com.updavid.liveoci_hilt.features.user.domain.usescases
+package com.updavid.liveoci_hilt.features.user.domain.usescases.user
 
 import com.updavid.liveoci_hilt.features.user.domain.entity.Message
 import com.updavid.liveoci_hilt.features.user.domain.repository.UserRepository

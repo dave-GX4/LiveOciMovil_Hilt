@@ -1,5 +1,6 @@
 package com.updavid.liveoci_hilt.features.home.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
@@ -8,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.features.bored.domain.usecases.BoredActivitiesUseCases
 import com.updavid.liveoci_hilt.features.home.presentation.page.HomeUiState
-import com.updavid.liveoci_hilt.features.user.domain.usescases.UserUseCases
+import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
+import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,24 +23,35 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val boredActivitiesUseCases: BoredActivitiesUseCases,
-    private val userUseCases: UserUseCases
+    private val userUseCases: UserUseCases,
+    private val photoUseCases: PhotoUseCases
 ): ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        getUserRemote()
+        fetchRemoteData()
+        observeLocalData()
         calculateGreeting()
-        observeUser()
         fetchRecommendedActivity()
     }
 
-    private fun getUserRemote(){
+    private fun fetchRemoteData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, isError = null) }
 
-            userUseCases.getUserByIdRemoteUseCase().onFailure { error ->
+            val userDeferred = async { userUseCases.getUserByIdRemoteUseCase() }
+            val photoDeferred = async { photoUseCases.getPhoto() }
+
+            val userResult = userDeferred.await()
+            val photoResult = photoDeferred.await()
+
+            userResult.onFailure { error ->
                 _uiState.update { it.copy(isError = error.message) }
+            }
+
+            if (photoResult.isFailure) {
+                Log.e("HomeViewModel", "No se pudo traer la foto remotamente.")
             }
 
             _uiState.update { it.copy(isLoading = false) }
@@ -61,7 +75,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun observeUser() {
+    private fun observeLocalData() {
         viewModelScope.launch {
             userUseCases.getUserRoom().collect { user ->
                 _uiState.update { it.copy(userName = user?.name) }

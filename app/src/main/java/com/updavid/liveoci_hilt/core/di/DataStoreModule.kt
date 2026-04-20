@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "liveoci_prefs_v2")
+    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "liveoci_prefs_v1")
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {

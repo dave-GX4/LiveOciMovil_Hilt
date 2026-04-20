@@ -2,7 +2,7 @@ package com.updavid.liveoci_hilt.features.user.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.updavid.liveoci_hilt.features.user.domain.usescases.UserUseCases
+import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import com.updavid.liveoci_hilt.features.user.presentation.page.TastesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
