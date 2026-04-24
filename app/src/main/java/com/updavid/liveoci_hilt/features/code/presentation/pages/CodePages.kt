@@ -1,6 +1,6 @@
 package com.updavid.liveoci_hilt.features.code.presentation.pages
 
-import ProfileViewModel
+import CodeViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +18,8 @@ import com.updavid.liveoci_hilt.features.code.presentation.components.Invitation
 
 
 @Composable
-fun ProfilePage(
-    viewModel: ProfileViewModel = viewModel()
+fun CodePage(
+    viewModel: CodeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

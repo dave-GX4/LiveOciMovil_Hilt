@@ -1,6 +1,9 @@
 package com.updavid.liveoci_hilt.core.navigation
 
 import kotlinx.serialization.Serializable
+
+@Serializable
+object Code
 @Serializable
 object Login
 @Serializable
