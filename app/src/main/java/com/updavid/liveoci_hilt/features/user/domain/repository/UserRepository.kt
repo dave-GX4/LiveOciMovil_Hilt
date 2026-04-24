@@ -1,20 +1,20 @@
 package com.updavid.liveoci_hilt.features.user.domain.repository
 
 import com.updavid.liveoci_hilt.features.user.domain.entity.User
-import com.updavid.liveoci_hilt.features.user.domain.entity.UserMessage
+import com.updavid.liveoci_hilt.features.user.domain.entity.Message
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun deleteAccountUser(): UserMessage
+    suspend fun deleteAccountUser(): Message
     suspend fun getUserByIdRemote()
     fun getUserRoom(): Flow<User?>
-    suspend fun updateNameUser(name: String): UserMessage
-    suspend fun updateEmailUser(email: String): UserMessage
-    suspend fun updatePasswordUser(password: String): UserMessage
+    suspend fun updateNameUser(name: String): Message
+    suspend fun updateEmailUser(email: String): Message
+    suspend fun updatePasswordUser(password: String): Message
     suspend fun updateTastesUser(
         interests: List<String>,
         topics: List<String>,
         description: String
-    ): UserMessage
+    ): Message
     suspend fun logoutLocal(): Result<Unit>
 }

@@ -1,11 +1,13 @@
 package com.updavid.liveoci_hilt.core.datastore
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class DataStoreManagerImpl @Inject constructor(
@@ -26,6 +28,7 @@ class DataStoreManagerImpl @Inject constructor(
     }
 
     override suspend fun clearSession() {
+        Log.d("AppDebug", "DataStore: Limpiando toda la sesión...")
         dataStore.edit { preferences ->
             preferences.clear()
         }

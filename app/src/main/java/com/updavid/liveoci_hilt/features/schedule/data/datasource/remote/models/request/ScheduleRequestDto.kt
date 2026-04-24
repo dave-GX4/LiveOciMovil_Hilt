@@ -1,10 +1,13 @@
 package com.updavid.liveoci_hilt.features.schedule.data.datasource.remote.models.request
 
+import com.google.gson.annotations.SerializedName
+
 data class ScheduleRequestDto(
     val title: String,
+    @SerializedName("day")
     val days: List<Int>,
-    val start_time: String,
-    val end_time: String,
+    val startTime: String,
+    val endTime: String,
     val active: Boolean,
     val type: String
 )

@@ -13,7 +13,7 @@ object Home
 @Serializable
 object FormSchedule
 @Serializable
-object ListSchedules
+object Schedules
 @Serializable
 object Profile
 @Serializable
@@ -26,3 +26,5 @@ object BoredActivity
 object Analyzer
 @Serializable
 object Splash
+@Serializable
+object Friends

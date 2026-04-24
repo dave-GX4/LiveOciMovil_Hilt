@@ -6,14 +6,16 @@ import com.updavid.liveoci_hilt.features.schedule.data.datasource.remote.models.
 import com.updavid.liveoci_hilt.features.schedule.data.datasource.remote.models.response.ScheduleResponseDto
 
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ScheduleLiveOciApi {
-    @POST("schedules/add")
+    @POST("schedules/add/{id}")
     suspend fun addSchedule(
+        @Path("id") userId: String,
         @Body request : ScheduleRequestDto
     ): MessageResponseDto
 
@@ -23,6 +25,13 @@ interface ScheduleLiveOciApi {
         @Body request: ScheduleUpdateRequestDto
     ): MessageResponseDto
 
-    @GET("schedules/")
-    suspend fun getAllSchedules(): List<ScheduleResponseDto>
+    @GET("schedules/allSchedules/{id}")
+    suspend fun getAllSchedules(
+        @Path("id") userId: String,
+    ): List<ScheduleResponseDto>
+
+    @DELETE("schedules/delete/{id}")
+    suspend fun deleteSchedule(
+        @Path("id") scheduleId: String
+    ): MessageResponseDto
 }

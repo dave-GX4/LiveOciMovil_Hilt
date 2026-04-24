@@ -13,11 +13,11 @@ fun MessageResponseDto.toDomain(): ScheduleMessage{
 }
 
 fun ScheduleResponseDto.toEntity() = ScheduleEntity(
-    id,
-    title,
-    days,
-    startTime,
-    endTime,
-    active,
-    type
+    uuid = uuid,
+    title = title,
+    days = days,
+    startTime = startTime,
+    endTime = endTime,
+    active = active,
+    type = type
 )

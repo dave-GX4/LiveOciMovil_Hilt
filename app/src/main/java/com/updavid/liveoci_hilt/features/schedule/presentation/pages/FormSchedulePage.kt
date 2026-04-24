@@ -1,48 +1,47 @@
 package com.updavid.liveoci_hilt.features.schedule.presentation.pages
 
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.updavid.liveoci_hilt.core.ui.atoms.SwitchCard
-import com.updavid.liveoci_hilt.core.ui.atoms.TextFieldComponent
-import com.updavid.liveoci_hilt.features.schedule.presentation.components.DaySelectorComponent
-import com.updavid.liveoci_hilt.features.schedule.presentation.components.TimeRangeSelector
+import com.updavid.liveoci_hilt.features.schedule.presentation.components.CategoryButton
+import com.updavid.liveoci_hilt.features.schedule.presentation.components.DayCircle
+import com.updavid.liveoci_hilt.features.schedule.presentation.components.WheelTimePickerDialog
 import com.updavid.liveoci_hilt.features.schedule.presentation.viewmodels.FormScheduleViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,125 +49,161 @@ fun FormSchedulePage(
     viewModel: FormScheduleViewModel,
     onBack: () -> Unit,
     onSuccessSaved: () -> Unit
-){
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    BackHandler {
-        viewModel.onResetForm()
-        onBack()
-    }
+    var showStartTimePicker by remember { mutableStateOf(false) }
+    var showEndTimePicker by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.isError) {
-        uiState.isError?.let { error ->
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-            viewModel.clearError()
+    LaunchedEffect(state.successMessage, state.errorMessage) {
+        state.errorMessage?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            viewModel.clearMessages()
         }
-    }
-
-    LaunchedEffect(uiState.isSuccess) {
-        if (uiState.isSuccess) {
-            Toast.makeText(context, "Horario guardado correctamente", Toast.LENGTH_SHORT).show()
-            viewModel.onResetForm()
+        state.successMessage?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            viewModel.clearMessages()
+            delay(1000)
             onSuccessSaved()
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = { Text("Agregar Horario Especial", fontWeight = FontWeight.SemiBold) },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            viewModel.onResetForm()
-                            onBack()
-                        }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-                )
-            },
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Nuevo Horario") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Atrás") }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 24.dp)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-            bottomBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                ) {
-                    Button(
-                        onClick = viewModel::onSaveSchedule,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF00E676),
-                            disabledContainerColor = Color(0xFF00E676).copy(alpha = 0.6f)
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        enabled = !uiState.isLoading
+            Text("Título", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { viewModel.updateTitle(it) },
+                placeholder = { Text("Ej. Compras...") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text("Categoría", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Cambiamos "special", "school", "work" por los valores del backend
+                CategoryButton("Especial", state.type == "personalizado", Modifier.weight(1f)) {
+                    viewModel.updateType("personalizado")
+                }
+                CategoryButton("Escuela", state.type == "escuela", Modifier.weight(1f)) {
+                    viewModel.updateType("escuela")
+                }
+                CategoryButton("Trabajo", state.type == "trabajo", Modifier.weight(1f)) {
+                    viewModel.updateType("trabajo")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text("Días", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                val daysMap = listOf(
+                    1 to "L",
+                    2 to "M",
+                    3 to "M",
+                    4 to "J",
+                    5 to "V",
+                    6 to "S",
+                    0 to "D"
+                )
+                daysMap.forEach { (dayValue, label) ->
+                    DayCircle(
+                        label = label,
+                        isSelected = state.days.contains(dayValue),
+                        onClick = { viewModel.toggleDay(dayValue) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Hora Inicio", fontWeight = FontWeight.Bold)
+                    OutlinedButton(
+                        onClick = { showStartTimePicker = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        if (uiState.isLoading) {
-                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                        } else {
-                            Text("Guardar Horario", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                        }
+                        Text(state.startTime, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Hora Fin", fontWeight = FontWeight.Bold)
+                    OutlinedButton(
+                        onClick = { showEndTimePicker = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(state.endTime, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                TextFieldComponent(
-                    value = uiState.title,
-                    onValueChange = viewModel::onTitleChanged,
-                    label = "Título de la actividad",
-                    errorMessage = uiState.titleError,
-                )
 
-                TimeRangeSelector(
-                    startTime = uiState.startTime,
-                    endTime = uiState.endTime,
-                    onStartTimeSelected = viewModel::onStartTimeChanged,
-                    onEndTimeSelected = viewModel::onEndTimeChanged,
-                    errorMessage = uiState.timeError
-                )
+            Spacer(modifier = Modifier.weight(1f))
 
-                SwitchCard(
-                    title = "¿Activar horario?",
-                    subtitle = "Habilitar esta actividad en tu rutina",
-                    checked = uiState.isActive,
-                    onCheckedChange = viewModel::onActiveChanged,
-                    activeColor = Color(0xFF00E676)
-                )
-
-                DaySelectorComponent(
-                    selectedDays = uiState.days,
-                    onDayClick = viewModel::onDaysChanged,
-                    errorMessage = uiState.daysError
-                )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedButton(
+                    onClick = onBack,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Cancelar")
+                }
+                Button(
+                    onClick = { viewModel.saveSchedule() },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = !state.isLoading
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
+                    } else {
+                        Text("Crear")
+                    }
+                }
             }
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f))
-                    .clickable(enabled = false, onClick = {}),
-                contentAlignment = Alignment.Center
-            ) {}
+        // --- Dialogos de Tiempo ---
+        if (showStartTimePicker) {
+            WheelTimePickerDialog(
+                initialTime = state.startTime,
+                onDismiss = { showStartTimePicker = false },
+                onTimeSelected = { viewModel.updateStartTime(it); showStartTimePicker = false }
+            )
+        }
+
+        if (showEndTimePicker) {
+            WheelTimePickerDialog(
+                initialTime = state.endTime,
+                onDismiss = { showEndTimePicker = false },
+                onTimeSelected = { viewModel.updateEndTime(it); showEndTimePicker = false }
+            )
         }
     }
 }

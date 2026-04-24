@@ -1,5 +1,6 @@
 package com.updavid.liveoci_hilt.features.auth.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.core.navigation.Home
@@ -22,6 +23,8 @@ class SessionViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val isLoggedIn = checkSessionUseCase()
+            Log.d("AUTH_TEST", "¿El usuario está logueado?: $isLoggedIn")
+
             _startDestination.value = if (isLoggedIn) Home else Login
         }
     }

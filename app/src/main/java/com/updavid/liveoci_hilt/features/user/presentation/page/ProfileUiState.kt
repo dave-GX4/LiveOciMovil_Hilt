@@ -7,6 +7,7 @@ data class ProfileUiState(
     val isSuccess: String? = null,
 
     val user: User? = null,
+    val userPhotoUrl: String? = null,
 
     val notificationStatus: Boolean = true,
     val darkModeStatus: Boolean = false,

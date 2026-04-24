@@ -9,149 +9,86 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import javax.inject.Inject
 
 @HiltViewModel
 class FormScheduleViewModel @Inject constructor(
-    private val scheduleUseCases: ScheduleUseCases
-): ViewModel() {
-    private val _uiState = MutableStateFlow(FormScheduleUiState())
-    val uiState = _uiState.asStateFlow()
+    private val useCases: ScheduleUseCases
+) : ViewModel() {
 
-    private val titleRegex = Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")
+    private val _state = MutableStateFlow(FormScheduleUiState())
+    val state = _state.asStateFlow()
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    fun updateTitle(title: String) { _state.update { it.copy(title = title) } }
+    fun updateType(type: String) { _state.update { it.copy(type = type) } }
+    fun updateStartTime(time: String) { _state.update { it.copy(startTime = time) } }
+    fun updateEndTime(time: String) { _state.update { it.copy(endTime = time) } }
 
-    fun onTitleChanged(title: String) {
-        val error = if (title.isBlank()) {
-            "El título no puede estar vacío"
-        } else if (!title.matches(titleRegex)) {
-            "El título solo debe contener letras"
-        } else {
-            null
+    fun toggleDay(day: Int) {
+        _state.update { currentState ->
+            val currentDays = currentState.days.toMutableList()
+            if (currentDays.contains(day)) currentDays.remove(day) else currentDays.add(day)
+            currentState.copy(days = currentDays)
         }
-
-        _uiState.update { it.copy(title = title, titleError = error) }
     }
 
-    fun onDaysChanged(day: Int) {
-        val currentDays = _uiState.value.days.toMutableList()
-        if (currentDays.contains(day)) {
-            currentDays.remove(day)
-        } else {
-            currentDays.add(day)
+    fun clearMessages() {
+        _state.update { it.copy(errorMessage = null, successMessage = null) }
+    }
+
+    fun saveSchedule() {
+        val currentState = _state.value
+
+        // Validaciones básicas
+        if (currentState.title.isBlank()) {
+            _state.update { it.copy(errorMessage = "El título no puede estar vacío") }
+            return
         }
-
-        val error = if (currentDays.isEmpty()) {
-            "Debes seleccionar al menos un día"
-        } else {
-            null
-        }
-
-        _uiState.update { it.copy(days = currentDays, daysError = error) }
-    }
-
-    fun onStartTimeChanged(startTime: String) {
-        _uiState.update { it.copy(startTime = startTime) }
-        validateTimes(startTime, _uiState.value.endTime)
-    }
-
-    fun onEndTimeChanged(endTime: String) {
-        _uiState.update { it.copy(endTime = endTime) }
-        validateTimes(_uiState.value.startTime, endTime)
-    }
-
-    fun onActiveChanged(active: Boolean) {
-        _uiState.update { it.copy(isActive = active) }
-    }
-
-    private fun validateTimes(start: String, end: String) {
-        if (start.isBlank() || end.isBlank()) {
-            _uiState.update { it.copy(timeError = null) }
+        if (currentState.days.isEmpty()) {
+            _state.update { it.copy(errorMessage = "Selecciona al menos un día") }
             return
         }
 
-        try {
-            val startTimeParsed = LocalTime.parse(start, timeFormatter)
-            val endTimeParsed = LocalTime.parse(end, timeFormatter)
-
-            val error = if (endTimeParsed.isBefore(startTimeParsed) || endTimeParsed == startTimeParsed) {
-                "La hora de fin debe ser posterior a la de inicio"
-            } else {
-                null
-            }
-            _uiState.update { it.copy(timeError = error) }
-
-        } catch (e: DateTimeParseException) {
-            _uiState.update { it.copy(timeError = "Formato de hora inválido (usa HH:mm)") }
-        }
-    }
-
-    private fun isValidForm(): Boolean {
-        onTitleChanged(_uiState.value.title)
-        validateTimes(_uiState.value.startTime, _uiState.value.endTime)
-
-        val state = _uiState.value
-        return state.titleError == null &&
-                state.days.isNotEmpty() &&
-                state.timeError == null &&
-                state.startTime.isNotBlank() &&
-                state.endTime.isNotBlank()
-    }
-
-    fun onSaveSchedule() {
-        if (!isValidForm()) {
-            _uiState.update { it.copy(isError = "Revisa los errores en el formulario") }
+        // Validación de horas (24hrs)
+        if (!isTimeValid(currentState.startTime, currentState.endTime)) {
+            _state.update { it.copy(errorMessage = "La hora de fin debe ser posterior a la de inicio") }
             return
         }
 
-        val state = _uiState.value
-        _uiState.update { it.copy(isLoading = true, isError = null) }
-
+        // Guardar en el servidor y BD
         viewModelScope.launch {
-            val result = if (state.id == null) {
-                scheduleUseCases.addSchedule(
-                    title = state.title.trim(),
-                    days = state.days,
-                    start_time = state.startTime,
-                    end_time = state.endTime,
-                    active = state.isActive,
-                    type = state.type
-                )
-            } else {
-                val id = state.id
-                val title = state.title.trim()
-                val days = state.days
-                val start_time = state.startTime
-                val end_time = state.endTime
-                val active = state.isActive
+            _state.update { it.copy(isLoading = true) }
 
-                scheduleUseCases.updateSchedule(
-                    id,
-                    title,
-                    days,
-                    start_time,
-                    end_time,
-                    active
-                )
-            }
+            val result = useCases.addSchedule(
+                title = currentState.title,
+                days = currentState.days,
+                startTime = currentState.startTime,
+                endTime = currentState.endTime,
+                active = true,
+                type = currentState.type
+            )
 
-            result.onSuccess {
-                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
-            }.onFailure { exception ->
-                _uiState.update { it.copy(isLoading = false, isError = exception.message) }
-            }
+            result.fold(
+                onSuccess = { response ->
+                    // Si es exitoso, mandamos el mensaje que viene del backend
+                    _state.update { it.copy(isLoading = false, successMessage = response.message ?: "Horario creado") }
+                },
+                onFailure = { error ->
+                    // Si falla, cachamos la excepción y mostramos el error del servidor (el que parseaste en el repositorio)
+                    _state.update { it.copy(isLoading = false, errorMessage = error.message) }
+                }
+            )
         }
     }
 
-    fun clearError() {
-        _uiState.update { it.copy(isError = null) }
-    }
+    // Lógica matemática para comparar "HH:mm"
+    private fun isTimeValid(start: String, end: String): Boolean {
+        val (startH, startM) = start.split(":").map { it.toInt() }
+        val (endH, endM) = end.split(":").map { it.toInt() }
 
-    fun onResetForm() {
-        _uiState.value = FormScheduleUiState()
+        val startTotalMinutes = (startH * 60) + startM
+        val endTotalMinutes = (endH * 60) + endM
+
+        return endTotalMinutes > startTotalMinutes
     }
 }
