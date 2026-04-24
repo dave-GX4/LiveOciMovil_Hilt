@@ -8,9 +8,9 @@ fun UserResponseDto.toEntity() = UserEntity(
     id,
     name,
     email,
-    notification,
-    interests ?: emptyList(),
-    topics ?: emptyList(),
-    description ?: emptyList(),
-    leisureType
+    notification = notification ?: false,
+    interests = interests ?: emptyList(),
+    topics = topics ?: emptyList(),
+    description = description?.toString() ?: "",
+    leisureType = leisureType ?: "Pasivo"
 )
