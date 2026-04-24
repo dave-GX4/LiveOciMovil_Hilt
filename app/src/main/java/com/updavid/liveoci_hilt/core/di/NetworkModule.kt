@@ -44,13 +44,10 @@ object NetworkModule {
     @Singleton
     @LiveOciRetrofit
     fun provideLiveOciRetrofit(
-        okHttpClient: OkHttpClient,
-        gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api-live-oci-production.up.railway.app/api/v2/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 }
