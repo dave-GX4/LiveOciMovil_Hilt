@@ -29,7 +29,7 @@ fun NavigationWrapper(
     val showBottomBar = currentDestination?.let { dest ->
         dest.hasRoute(Home::class) ||
                 dest.hasRoute(BoredActivity::class) ||
-                dest.hasRoute(Friends::class) ||
+                dest.hasRoute(Code::class) ||
                 dest.hasRoute(Analyzer::class) ||
                 dest.hasRoute(Profile::class)
     } ?: false
@@ -37,7 +37,7 @@ fun NavigationWrapper(
     val selectedIndex = when {
         currentDestination?.hasRoute(Home::class) == true -> 0
         currentDestination?.hasRoute(BoredActivity::class) == true -> 1
-        currentDestination?.hasRoute(Friends::class) == true -> 2
+        currentDestination?.hasRoute(Code::class) == true -> 2
         currentDestination?.hasRoute(Analyzer::class) == true -> 3
         currentDestination?.hasRoute(Profile::class) == true -> 4
         else -> 0
@@ -66,7 +66,7 @@ fun NavigationWrapper(
                     // Respetamos tu lógica del botón central
                     if (newIndex == 2) {
                         // Navegar a la acción del botón "+"
-                        navController.navigate(Friends)
+                        navController.navigate(Code)
                         return@BottomNavigationBar
                     }
 

@@ -1,19 +1,59 @@
+package com.updavid.liveoci_hilt.features.code.presentation.viewmodels
+
 import androidx.lifecycle.ViewModel
-import com.updavid.liveoci_hilt.features.code.presentation.viewmodels.CodeUiState
+import androidx.lifecycle.viewModelScope
+import com.updavid.liveoci_hilt.features.code.domain.usecases.CodeUseCases
+import com.updavid.liveoci_hilt.features.code.presentation.pages.CodeUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-
-class CodeViewModel : ViewModel() {
+@HiltViewModel
+class CodeViewModel @Inject constructor(
+    private val useCases: CodeUseCases
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CodeUiState())
     val uiState: StateFlow<CodeUiState> = _uiState.asStateFlow()
 
+    init {
+        startListeningToMyCode()
+    }
+
+    private fun startListeningToMyCode() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+            try {
+                useCases.streamCodeOfUser()
+                    .catch { e ->
+                        // Si se cae la conexión SSE
+                        _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                    }
+                    .collect { newCode ->
+                        // ¡Magia en tiempo real! Cada vez que el server mande un código, esto se actualiza
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                codeData = newCode,
+                                errorMessage = null
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
+        }
+    }
+
     fun toggleInvitationCodeVisibility() {
-        _uiState.value = _uiState.value.copy(
-            isInvitationCodeVisible = !_uiState.value.isInvitationCodeVisible
-        )
+        _uiState.update {
+            it.copy(isInvitationCodeVisible = !it.isInvitationCodeVisible)
+        }
     }
 }
