@@ -115,7 +115,6 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val errorJsonString = e.response()?.errorBody()?.string()
             val errorMessage = try {
-                // Extraemos el campo "message" del JSON de error
                 JSONObject(errorJsonString).getString("message")
             } catch (jsonException: Exception) {
                 Log.e("UserRepository", "Error parseando JSON de error: $jsonException")
