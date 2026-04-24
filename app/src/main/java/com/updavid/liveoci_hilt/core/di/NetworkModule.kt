@@ -17,27 +17,40 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    @LiveOciRetrofit
-    fun provideLiveOciRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api-live-oci-production.up.railway.app/api/v2/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
-
-    @Provides
-    @Singleton
     fun provideGson(): Gson = GsonBuilder()
         .setDateFormat("yyyy-MM-dd HH:mm:ss")
         .create()
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideNormalOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @StreamingClient
+    fun provideStreamingOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(0, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @LiveOciRetrofit
+    fun provideLiveOciRetrofit(
+        okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api-live-oci-production.up.railway.app/api/v2/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 }

@@ -1,11 +1,19 @@
 package com.updavid.liveoci_hilt.features.code.data.repository
 
 import android.util.Log
+import com.updavid.liveoci_hilt.core.datastore.DataStoreService
+import com.updavid.liveoci_hilt.core.ssedatasource.SseDataSource
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.api.CodeLiveOciApi
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers.toDomain
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
 import com.updavid.liveoci_hilt.features.code.domain.repository.CodeRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -13,27 +21,29 @@ import javax.inject.Inject
 
 class CodeRepositoryImpl @Inject constructor(
     private val api: CodeLiveOciApi,
+    private val sseDataSource: SseDataSource,
+    private val dataStore: DataStoreService
 ) : CodeRepository {
+    override fun streamCodeOfUser(): Flow<Code> = flow {
+        // Dentro de flow { }, SÍ se puede usar suspend (como first())
+        val userId = dataStore.getUserId().first()
+            ?: throw Exception("Sesión no válida: Usuario no encontrado")
 
-    override suspend fun getCodeOfUser(id: String): Code {
-        return try {
-            val response = api.getCodeFriendOfUser(id)
-            response.toDomain()
-        } catch (e: IOException) {
-            // Error de red (sin internet, timeout, etc.)
-            throw Exception("No hay conexión a internet")
-        } catch (e: HttpException) {
-            // Errores HTTP (400, 404, 500, etc.)
-            val errorMsg = "Error del servidor: ${e.code()}"
-            throw Exception(errorMsg)
-        } catch (e: Exception) {
-            // Errores generales (parsing, nulls, etc.)
-            throw Exception("Ocurrió un error inesperado")
-        }
+        // Obtencion de Flow del DataSource y emitimos todos sus valores
+        val sseFlow = sseDataSource.streamCode(userId).map { it.toDomain() }
+
+        emitAll(sseFlow) // Conecta la tubería del SSE con la salida de esta función
+
+    }.catch { e ->
+        Log.e("CodeRepository", "Error en el stream: ${e.message}")
+        throw Exception("Se perdió la conexión en tiempo real: ${e.message}")
     }
 
-    override suspend fun searchUserByCode(id: String, code: String): FoundUser {
+    override suspend fun searchUserByCode(code: String): FoundUser {
         return try {
+            val id = dataStore.getUserId().first()
+                ?: throw Exception("Sesión no válida: Usuario no encontrado")
+
             val response = api.searchUserByCode(id, code)
             response.toDomain()
         }catch (e: HttpException) {

@@ -13,9 +13,4 @@ interface CodeLiveOciApi {
         @Path("id") id: String,
         @Body code: String
     ): FoundUserResponseDto
-
-    @GET("/code/stream/{id}")
-    suspend fun getCodeFriendOfUser(
-        @Path("id") id: String
-    ): CodeResponseDto
 }

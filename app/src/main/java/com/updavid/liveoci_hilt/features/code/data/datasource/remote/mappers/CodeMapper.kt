@@ -1,11 +1,11 @@
 package com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers
 
-import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.CodeResponseDto
+import com.updavid.liveoci_hilt.core.ssedatasource.dtos.CodeSSEDto
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.FoundUserResponseDto
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
 
-fun CodeResponseDto.toDomain(): Code{
+fun CodeSSEDto.toDomain(): Code {
     return Code(
         id = this.id,
         userId = this.userId,

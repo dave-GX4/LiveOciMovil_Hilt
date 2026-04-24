@@ -23,3 +23,5 @@ object BoredActivity
 object Analyzer
 @Serializable
 object Splash
+@Serializable
+object Friends
