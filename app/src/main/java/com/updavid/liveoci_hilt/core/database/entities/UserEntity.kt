@@ -11,6 +11,6 @@ data class UserEntity(
     val notification: Boolean,
     val interests: List<String>,
     val topics: List<String>,
-    val description: String,
+    val description: Any,
     val leisureType: String
 )
