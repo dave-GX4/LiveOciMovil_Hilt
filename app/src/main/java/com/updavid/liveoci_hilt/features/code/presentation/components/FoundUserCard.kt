@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -98,7 +99,7 @@ fun FoundUserCard(
                         onClick = { onAction("send") },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAEBBFF))
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.PersonAdd, contentDescription = null, modifier = Modifier.size(16.dp))
                         Text(" Enviar", color = Color.Black)
                     }
                 }
@@ -108,7 +109,7 @@ fun FoundUserCard(
                         onClick = { onAction("send") },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAEBBFF))
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.PersonAdd, contentDescription = null, modifier = Modifier.size(16.dp))
                         Text(" Enviar", color = Color.Black)
                     }
                 }
