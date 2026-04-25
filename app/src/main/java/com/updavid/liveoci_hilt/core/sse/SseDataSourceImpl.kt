@@ -1,10 +1,9 @@
-package com.updavid.liveoci_hilt.core.ssedatasource
+package com.updavid.liveoci_hilt.core.sse
 
 import android.util.Log
 import com.google.gson.Gson
 import com.updavid.liveoci_hilt.core.di.StreamingClient
-import com.updavid.liveoci_hilt.core.ssedatasource.dtos.CodeSSEDto
-import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.CodeResponseDto
+import com.updavid.liveoci_hilt.core.sse.dtos.CodeSSEDto
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +19,6 @@ class SseDataSourceImpl @Inject constructor(
     @StreamingClient private val okHttpClient: OkHttpClient,
     private val gson: Gson
 ) : SseDataSource {
-
     override fun streamCode(id: String): Flow<CodeSSEDto> = callbackFlow {
         val request = Request.Builder()
             .url("https://api-live-oci-production.up.railway.app/api/v2/code/stream/$id")

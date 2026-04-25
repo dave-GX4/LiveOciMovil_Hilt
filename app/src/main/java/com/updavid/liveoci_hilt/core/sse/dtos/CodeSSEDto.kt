@@ -1,4 +1,4 @@
-package com.updavid.liveoci_hilt.core.ssedatasource.dtos
+package com.updavid.liveoci_hilt.core.sse.dtos
 
 import java.time.LocalDateTime
 

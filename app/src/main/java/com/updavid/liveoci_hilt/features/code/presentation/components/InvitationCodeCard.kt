@@ -1,10 +1,12 @@
 package com.updavid.liveoci_hilt.features.code.presentation.components
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Timer
@@ -20,6 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,8 +39,10 @@ fun InvitationCodeCard(
     modifier: Modifier = Modifier
 ) {
     val displayedCode = if (isCodeVisible) codeData.code else "••••••••"
-
     val formatter = DateTimeFormatter.ofPattern("dd MMM, HH:mm")
+
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -65,19 +72,40 @@ fun InvitationCodeCard(
                     )
                 }
 
-                IconButton(
-                    onClick = onToggleVisibility,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF252936))
-                ) {
-                    Icon(
-                        imageVector = if (isCodeVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
-                        contentDescription = "Alternar visibilidad",
-                        tint = Color(0xFFAEBBFF),
-                        modifier = Modifier.size(18.dp)
-                    )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                    IconButton(
+                        onClick = {
+                            clipboardManager.setText(AnnotatedString(codeData.code))
+                            Toast.makeText(context, "Código copiado", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF252936))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ContentCopy,
+                            contentDescription = "Copiar código",
+                            tint = Color(0xFFAEBBFF),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = onToggleVisibility,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF252936))
+                    ) {
+                        Icon(
+                            imageVector = if (isCodeVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                            contentDescription = "Alternar visibilidad",
+                            tint = Color(0xFFAEBBFF),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
 
