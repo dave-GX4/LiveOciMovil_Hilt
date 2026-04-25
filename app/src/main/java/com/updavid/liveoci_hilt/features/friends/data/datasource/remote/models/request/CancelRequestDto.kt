@@ -1,6 +1,5 @@
 package com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.request
 
-data class SendRequestDto(
-    val userIdA: String,
-    val userIdB: String
+data class CancelRequestDto(
+    val userId: String
 )

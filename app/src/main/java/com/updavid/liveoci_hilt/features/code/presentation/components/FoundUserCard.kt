@@ -45,7 +45,6 @@ fun FoundUserCard(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar (Placeholder simple)
             Box(
                 modifier = Modifier
                     .size(50.dp)
@@ -62,40 +61,51 @@ fun FoundUserCard(
                 Text(text = "#${user.code}", color = Color.Gray, fontSize = 12.sp)
             }
 
-            // --- LÓGICA DE LA TABLA ---
             when {
-                // Caso: Ya son amigos
                 user.requestStatus == "accepted" -> {
                     Text("Amigos", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
                 }
 
-                // Caso: Pendiente
                 user.requestStatus == "pending" -> {
                     if (user.isRequester == true) {
-                        Button(onClick = { /* onAction("cancel") */ }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                        Button(
+                            onClick = { onAction("cancel") },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
                             Text("Cancelar", fontSize = 12.sp)
                         }
                     } else {
                         Column(horizontalAlignment = Alignment.End) {
-                            Button(onClick = { /* onAction("accept") */ }, modifier = Modifier.height(30.dp)) {
+                            Button(
+                                onClick = { onAction("accept") },
+                                modifier = Modifier.height(30.dp)
+                            ) {
                                 Text("Aceptar", fontSize = 10.sp)
                             }
-                            TextButton(onClick = { /* onAction("reject") */ }) {
+                            TextButton(onClick = { onAction("reject") }) {
                                 Text("Rechazar", color = Color.Gray, fontSize = 10.sp)
                             }
                         }
                     }
                 }
 
-                // Caso: Rechazado por el otro (Espera)
                 user.requestStatus == "rejected" && user.isRequester == true -> {
                     Text("Espera...", color = Color.Gray, fontStyle = FontStyle.Italic)
                 }
 
-                // Caso: Sin relación (o null/undefined)
+                user.requestStatus == null || user.requestStatus == "" -> {
+                    Button(
+                        onClick = { onAction("send") },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAEBBFF))
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Text(" Enviar", color = Color.Black)
+                    }
+                }
+
                 else -> {
                     Button(
-                        onClick = { /* onAction("send") */ },
+                        onClick = { onAction("send") },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAEBBFF))
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))

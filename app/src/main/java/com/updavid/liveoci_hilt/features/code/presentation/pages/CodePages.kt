@@ -165,7 +165,17 @@ fun CodePage(
             Spacer(modifier = Modifier.height(16.dp))
 
             uiState.foundUser?.let { user ->
-                FoundUserCard(user = user, onAction = { /* Handle logic */ })
+                FoundUserCard(
+                    user = user,
+                    onAction = { action ->
+                        when (action) {
+                            "send" -> viewModel.sendFriendRequest(user.id)
+                            "cancel" -> user.requestId?.let { viewModel.cancelFriendRequest(it) }
+                            "accept" -> user.requestId?.let { viewModel.responseFriendRequest(it, "accepted") }
+                            "reject" -> user.requestId?.let { viewModel.responseFriendRequest(it, "rejected") }
+                        }
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(40.dp))
