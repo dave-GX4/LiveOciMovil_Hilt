@@ -41,15 +41,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNormalOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .build()
-    }
-
-    @Provides
-    @Singleton
     @StreamingClient
     fun provideStreamingOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
@@ -61,8 +52,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @LiveOciRetrofit
-    fun provideLiveOciRetrofit(
-    ): Retrofit {
+    fun provideLiveOciRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api-live-oci-production.up.railway.app/api/v2/")
             .addConverterFactory(GsonConverterFactory.create())

@@ -2,9 +2,10 @@ package com.updavid.liveoci_hilt.features.code.data.repository
 
 import android.util.Log
 import com.updavid.liveoci_hilt.core.datastore.DataStoreService
-import com.updavid.liveoci_hilt.core.ssedatasource.SseDataSource
+import com.updavid.liveoci_hilt.core.sse.SseDataSource
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.api.CodeLiveOciApi
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers.toDomain
+import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.request.SearchByCodeRequest
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
 import com.updavid.liveoci_hilt.features.code.domain.repository.CodeRepository
@@ -44,21 +45,34 @@ class CodeRepositoryImpl @Inject constructor(
             val id = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida: Usuario no encontrado")
 
-            val response = api.searchUserByCode(id, code)
+            val request = SearchByCodeRequest(code)
+            val response = api.searchUserByCode(id, request)
             response.toDomain()
-        }catch (e: HttpException) {
-            val errorJsonString = e.response()?.errorBody()?.string()
-            val errorMessage = try {
-                JSONObject(errorJsonString).getString("message")
-            } catch (jsonException: Exception) {
-                "Error desconocido del servidor."
+        } catch (e: HttpException) {
+            val errorBodyString = e.response()?.errorBody()?.string()
+            val errorMessage = if (!errorBodyString.isNullOrBlank()) {
+                try {
+                    val json = JSONObject(errorBodyString)
+                    if (json.has("error")) {
+                        json.getString("error")
+                    }
+                    else if (json.has("message")) {
+                        json.getString("message")
+                    }
+                    else {
+                        "Error inesperado del servidor."
+                    }
+                } catch (jsonException: Exception) {
+                    "Error de conexión."
+                }
+            } else {
+                "Error ${e.code()}"
             }
             throw Exception(errorMessage)
 
         } catch (e: IOException) {
             Log.e("CodeRepository", "Error de red: ${e.message}")
             throw Exception("Error de conexión, revisa tu internet.")
-
         } catch (e: Exception) {
             Log.e("CodeRepository", "Error interno en el móvil: ${e.message}", e)
             throw Exception("Ocurrió un error interno al procesar la solicitud.")

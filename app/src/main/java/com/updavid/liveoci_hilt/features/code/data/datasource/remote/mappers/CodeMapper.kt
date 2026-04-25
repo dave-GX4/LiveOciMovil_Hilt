@@ -1,6 +1,6 @@
 package com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers
 
-import com.updavid.liveoci_hilt.core.ssedatasource.dtos.CodeSSEDto
+import com.updavid.liveoci_hilt.core.sse.dtos.CodeSSEDto
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.FoundUserResponseDto
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
@@ -20,6 +20,9 @@ fun FoundUserResponseDto.toDomain(): FoundUser {
         id = this.id,
         name = this.name,
         avatarUrl = this.avatarUrl,
-        code = this.code
+        code = this.code,
+        requestId = this.requestId?.toString(),
+        requestStatus = this.requestStatus?.toString(),
+        isRequester = this.isRequester
     )
 }

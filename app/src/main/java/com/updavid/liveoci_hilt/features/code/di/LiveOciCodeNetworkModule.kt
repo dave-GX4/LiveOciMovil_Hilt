@@ -3,8 +3,8 @@ package com.updavid.liveoci_hilt.features.code.di
 import com.google.gson.Gson
 import com.updavid.liveoci_hilt.core.di.LiveOciRetrofit
 import com.updavid.liveoci_hilt.core.di.StreamingClient
-import com.updavid.liveoci_hilt.core.ssedatasource.SseDataSource
-import com.updavid.liveoci_hilt.core.ssedatasource.SseDataSourceImpl
+import com.updavid.liveoci_hilt.core.sse.SseDataSource
+import com.updavid.liveoci_hilt.core.sse.SseDataSourceImpl
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.api.CodeLiveOciApi
 import dagger.Module
 import dagger.Provides

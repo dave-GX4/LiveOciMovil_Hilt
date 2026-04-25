@@ -32,11 +32,11 @@ class CodeViewModel @Inject constructor(
             try {
                 useCases.streamCodeOfUser()
                     .catch { e ->
-                        // Si se cae la conexión SSE
+                        // Si en caso se cae la conexión SSE
                         _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
                     }
                     .collect { newCode ->
-                        // ¡Magia en tiempo real! Cada vez que el server mande un código, esto se actualiza
+                        // Cada vez que el server mande un código, esto se actualiza
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -55,5 +55,28 @@ class CodeViewModel @Inject constructor(
         _uiState.update {
             it.copy(isInvitationCodeVisible = !it.isInvitationCodeVisible)
         }
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _uiState.update { it.copy(searchQuery = query, searchErrorMessage = null) }
+    }
+
+    fun searchUser() {
+        val query = _uiState.value.searchQuery
+        if (query.isBlank()) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSearching = true, searchErrorMessage = null, foundUser = null) }
+            try {
+                val user = useCases.searchUserByCode(query)
+                _uiState.update { it.copy(foundUser = user, isSearching = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSearching = false, searchErrorMessage = e.message) }
+            }
+        }
+    }
+
+    fun clearSearchError() {
+        _uiState.update { it.copy(searchErrorMessage = null) }
     }
 }
