@@ -9,7 +9,7 @@ import com.updavid.liveoci_hilt.features.user.data.datasource.remote.mapper.toDo
 import com.updavid.liveoci_hilt.features.user.data.datasource.remote.mapper.toEntity
 import com.updavid.liveoci_hilt.features.user.data.datasource.remote.models.request.UserRequestDto
 import com.updavid.liveoci_hilt.features.user.domain.entity.User
-import com.updavid.liveoci_hilt.features.user.domain.entity.UserMessage
+import com.updavid.liveoci_hilt.features.user.domain.entity.Message
 import com.updavid.liveoci_hilt.features.user.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -25,7 +25,7 @@ class UserRepositoryImpl @Inject constructor(
     private val dao: UserDao,
     private val dataStore: DataStoreService
 ): UserRepository {
-    override suspend fun deleteAccountUser(): UserMessage {
+    override suspend fun deleteAccountUser(): Message {
         return try {
             val userId = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida")
@@ -66,10 +66,16 @@ class UserRepositoryImpl @Inject constructor(
                 ?: throw Exception("Sesión no válida")
 
             val remoteUser = api.getUserById(userId)
-
             dao.saveOrUpdateUser(remoteUser.toEntity())
 
         } catch (e: HttpException) {
+            val code = e.code()
+
+            if (code == 404 || code == 401) {
+                logoutLocal()
+                throw Exception("Tu sesión ha expirado o la cuenta ya no existe. Inicia sesión de nuevo.")
+            }
+
             val errorJsonString = e.response()?.errorBody()?.string()
             val errorMessage = try {
                 JSONObject(errorJsonString).getString("message")
@@ -77,7 +83,6 @@ class UserRepositoryImpl @Inject constructor(
                 "Error desconocido del servidor."
             }
             throw Exception(errorMessage)
-
         } catch (e: IOException) {
             throw Exception("Error de conexión, revisa tu internet.")
         } catch (e: Exception) {
@@ -97,7 +102,7 @@ class UserRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun updateNameUser(name: String): UserMessage {
+    override suspend fun updateNameUser(name: String): Message {
         return try {
             val userId = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida")
@@ -110,7 +115,6 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val errorJsonString = e.response()?.errorBody()?.string()
             val errorMessage = try {
-                // Extraemos el campo "message" del JSON de error
                 JSONObject(errorJsonString).getString("message")
             } catch (jsonException: Exception) {
                 Log.e("UserRepository", "Error parseando JSON de error: $jsonException")
@@ -124,7 +128,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateEmailUser(email: String): UserMessage {
+    override suspend fun updateEmailUser(email: String): Message {
         return try {
             val userId = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida")
@@ -150,7 +154,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updatePasswordUser(password: String): UserMessage {
+    override suspend fun updatePasswordUser(password: String): Message {
         return try {
             val userId = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida")
@@ -180,7 +184,7 @@ class UserRepositoryImpl @Inject constructor(
         interests: List<String>,
         topics: List<String>,
         description: String
-    ): UserMessage {
+    ): Message {
         return try {
             val userId = dataStore.getUserId().first()
                 ?: throw Exception("Sesión no válida")

@@ -4,10 +4,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.updavid.liveoci_hilt.core.navigation.Code
 import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.Login
 import com.updavid.liveoci_hilt.core.navigation.Profile
 import com.updavid.liveoci_hilt.core.navigation.ProfileEdit
+import com.updavid.liveoci_hilt.core.navigation.Schedules
 import com.updavid.liveoci_hilt.core.navigation.Tastes
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileEditPage
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfilePage
@@ -30,7 +32,6 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
                 onNavigateToEditInterests = {
                     navController.navigate(ProfileEdit)
                 },
-                //onNavigateToSchedules = {},
                 onLogoutSuccess = {
                     navController.navigate(Login) {
                         popUpTo(0) { inclusive = true }
@@ -39,6 +40,12 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
                 },
                 onNavigateTastes = {
                     navController.navigate(Tastes)
+                },
+                onNavigateSchedules = {
+                    navController.navigate(Schedules)
+                },
+                onNavigateToCodeFriend = {
+                    navController.navigate(Code)
                 },
                 onBack = {
                     navController.navigateUp()

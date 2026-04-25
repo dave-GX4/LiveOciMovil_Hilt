@@ -1,6 +1,9 @@
 package com.updavid.liveoci_hilt.core.navigation
 
 import kotlinx.serialization.Serializable
+
+@Serializable
+object Code
 @Serializable
 object Login
 @Serializable
@@ -10,7 +13,7 @@ object Home
 @Serializable
 object FormSchedule
 @Serializable
-object ListSchedules
+object Schedules
 @Serializable
 object Profile
 @Serializable
@@ -23,3 +26,5 @@ object BoredActivity
 object Analyzer
 @Serializable
 object Splash
+@Serializable
+object Friends

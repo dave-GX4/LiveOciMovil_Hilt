@@ -8,7 +8,7 @@ import com.updavid.liveoci_hilt.core.database.convert.Converters
 @TypeConverters(Converters::class)
 @Entity(tableName = "schedules")
 data class ScheduleEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey val uuid: String,
     val title: String,
     val days: List<Int>,
     val startTime: String,

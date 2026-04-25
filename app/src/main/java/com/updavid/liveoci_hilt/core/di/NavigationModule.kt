@@ -5,6 +5,7 @@ import com.updavid.liveoci_hilt.features.analyzer.navigation.AnalyzerNavGraph
 import com.updavid.liveoci_hilt.features.user.navigation.UserNavGraph
 import com.updavid.liveoci_hilt.features.auth.navigation.AuthNavGraph
 import com.updavid.liveoci_hilt.features.bored.navigation.BoredActivitiesNavGraph
+import com.updavid.liveoci_hilt.features.code.navigation.CodeNavGraph
 import com.updavid.liveoci_hilt.features.home.navigation.PresentationNavGraph
 import com.updavid.liveoci_hilt.features.schedule.navigation.ScheduleNavGraph
 import dagger.Binds
@@ -42,13 +43,19 @@ abstract class NavigationModule {
 
     @Binds
     @IntoSet
-    abstract fun bindBoredActivities(
+    abstract fun bindBoredActivitiesNavGraph(
         boredActivitiesNavGraph: BoredActivitiesNavGraph
     ): FeatureNavGraph
 
     @Binds
     @IntoSet
-    abstract fun bindAnalyzer(
+    abstract fun bindAnalyzerNavGraph(
         analyzerNavGraph: AnalyzerNavGraph
+    ): FeatureNavGraph
+
+    @Binds
+    @IntoSet
+    abstract fun bindCodeNavGraph(
+        codeNavGraph: CodeNavGraph
     ): FeatureNavGraph
 }

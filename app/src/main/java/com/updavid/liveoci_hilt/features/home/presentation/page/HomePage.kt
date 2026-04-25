@@ -1,6 +1,5 @@
 package com.updavid.liveoci_hilt.features.home.presentation.page
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,16 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.updavid.liveoci_hilt.core.ui.atoms.BottomNavigationBar
-import com.updavid.liveoci_hilt.features.bored.presentation.components.ActivityItemCard
 import com.updavid.liveoci_hilt.features.home.presentation.components.RecommendedCard
 import com.updavid.liveoci_hilt.features.home.presentation.components.UserHeader
 import com.updavid.liveoci_hilt.features.home.presentation.viewmodel.HomeViewModel
@@ -61,9 +56,10 @@ fun HomePage(
                 greeting = uiState.greeting,
                 greetingIcon = uiState.greetingIcon,
                 userName = uiState.userName,
+                userPhotoUrl = uiState.userPhotoUrl
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -72,14 +68,14 @@ fun HomePage(
             ) {
                 Text(
                     text = "Recomendado para ti",
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Actualizar",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { viewModel.fetchRecommendedActivity() }
                 )
@@ -92,14 +88,23 @@ fun HomePage(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(160.dp),
+                            .height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 uiState.isError != null -> {
-                    Text(text = "Error al cargar la recomendación.", color = Color.Red)
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Error al cargar: ${uiState.isError}",
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
                 }
                 uiState.recommendedActivity != null -> {
                     RecommendedCard(activity = uiState.recommendedActivity!!)

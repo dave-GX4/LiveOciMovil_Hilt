@@ -1,0 +1,14 @@
+package com.updavid.liveoci_hilt.features.user.domain.usescases.user
+
+import com.updavid.liveoci_hilt.features.user.domain.repository.UserRepository
+import javax.inject.Inject
+
+class GetUserByIdRemoteUseCase @Inject constructor(
+    private val repository: UserRepository
+) {
+    suspend operator fun invoke(): Result<Unit> {
+        return runCatching {
+            repository.getUserByIdRemote()
+        }
+    }
+}

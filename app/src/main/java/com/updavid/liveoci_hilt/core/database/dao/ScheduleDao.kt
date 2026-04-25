@@ -13,8 +13,11 @@ interface ScheduleDao {
     @Query("SELECT * FROM schedules")
     fun getAllSchedules(): Flow<List<ScheduleEntity>>
 
-    @Query("SELECT * FROM schedules WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM schedules WHERE uuid = :id LIMIT 1")
     fun getScheduleById(id: String): Flow<ScheduleEntity?>
+
+    @Query("SELECT * FROM schedules WHERE type = :type LIMIT 1")
+    fun getScheduleByType(type: String): Flow<ScheduleEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSchedules(schedules: List<ScheduleEntity>)

@@ -75,12 +75,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-
+    implementation(libs.androidx.material3)
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.androidx.material3)
-    ksp(libs.room.compiler)
     // viewModel()
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     // Retrofit
@@ -101,8 +99,11 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     //Serializable
     implementation(libs.kotlinx.serialization.json)
+    // SSE
+    implementation(libs.okhttp.sse)
     // KSP
     ksp(libs.hilt.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -4,7 +4,7 @@ import com.updavid.liveoci_hilt.core.database.entities.ScheduleEntity
 import com.updavid.liveoci_hilt.features.schedule.domain.entity.Schedule
 
 fun ScheduleEntity.toDomain() = Schedule(
-    id,
+    uuid,
     title,
     days,
     startTime,
