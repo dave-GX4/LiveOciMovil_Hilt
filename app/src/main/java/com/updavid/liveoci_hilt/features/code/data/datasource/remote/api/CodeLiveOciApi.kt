@@ -14,4 +14,9 @@ interface CodeLiveOciApi {
         @Path("id") id: String,
         @Body code: SearchByCodeRequest
     ): FoundUserResponseDto
+
+    @GET("code/get/{id}")
+    suspend fun getCodeOfUser(
+        @Path("id") id: String
+    ): CodeResponseDto
 }

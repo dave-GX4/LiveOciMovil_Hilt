@@ -19,9 +19,10 @@ class SseDataSourceImpl @Inject constructor(
     @StreamingClient private val okHttpClient: OkHttpClient,
     private val gson: Gson
 ) : SseDataSource {
+
     override fun streamCode(id: String): Flow<CodeSSEDto> = callbackFlow {
         val request = Request.Builder()
-            .url("https://api-live-oci-production.up.railway.app/api/v2/code/stream/$id")
+            .url("https://api-live-oci-production.up.railway.app/api/v2/sse/stream/$id")
             .header("Accept", "text/event-stream")
             .build()
 
@@ -33,26 +34,25 @@ class SseDataSourceImpl @Inject constructor(
                 data: String
             ) {
                 try {
-                    val dto = gson.fromJson(data, CodeSSEDto::class.java)
-                    trySend(dto)
+                    // Solo parseamos si el evento es una actualización de código
+                    if (type == "CODE_UPDATED") {
+                        val dto = gson.fromJson(data, CodeSSEDto::class.java)
+                        trySend(dto)
+                    }
                 } catch (e: Exception) {
-                    Log.e("SSE", "Error: ${e.message}")
+                    Log.e("GlobalSSE", "Error parseando evento $type: ${e.message}")
                 }
             }
-            override fun onFailure(
-                eventSource: EventSource,
-                t: Throwable?,
-                response: Response?
-            ) {
-                close(t ?: Exception("Error en SSE"))
+
+            override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
+                close(t ?: Exception("Conexión global SSE interrumpida"))
             }
         }
 
-        val eventSource = EventSources.createFactory(okHttpClient).newEventSource(
-            request,
-            listener
-        )
+        val eventSource = EventSources.createFactory(okHttpClient).newEventSource(request, listener)
+
         awaitClose {
+            Log.d("GlobalSSE", "Cerrando conexión SSE para liberar recursos")
             eventSource.cancel()
         }
     }

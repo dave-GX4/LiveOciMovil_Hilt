@@ -26,18 +26,32 @@ class CodeRepositoryImpl @Inject constructor(
     private val dataStore: DataStoreService
 ) : CodeRepository {
     override fun streamCodeOfUser(): Flow<Code> = flow {
-        // Dentro de flow { }, SÍ se puede usar suspend (como first())
         val userId = dataStore.getUserId().first()
             ?: throw Exception("Sesión no válida: Usuario no encontrado")
 
-        // Obtencion de Flow del DataSource y emitimos todos sus valores
-        val sseFlow = sseDataSource.streamCode(userId).map { it.toDomain() }
+        var currentRecordId = ""
 
-        emitAll(sseFlow) // Conecta la tubería del SSE con la salida de esta función
+        try {
+            val initialDto = api.getCodeOfUser(userId)
+            currentRecordId = initialDto.id
+            emit(initialDto.toDomain())
+        } catch (e: Exception) {
+            Log.e("CodeRepository", "Error REAL al cargar código inicial: ${e.message}", e)
+            throw Exception("Fallo al procesar los datos: ${e.message}")
+        }
+
+        val sseFlow = sseDataSource.streamCode(userId).map { sseDto ->
+            sseDto.toDomain(
+                recordId = currentRecordId,
+                currentUserId = userId
+            )
+        }
+
+        emitAll(sseFlow)
 
     }.catch { e ->
         Log.e("CodeRepository", "Error en el stream: ${e.message}")
-        throw Exception("Se perdió la conexión en tiempo real: ${e.message}")
+        throw Exception(e.message ?: "Se perdió la conexión en tiempo real")
     }
 
     override suspend fun searchUserByCode(code: String): FoundUser {

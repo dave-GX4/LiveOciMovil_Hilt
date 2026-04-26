@@ -1,7 +1,7 @@
 package com.updavid.liveoci_hilt.features.friends.di
 
 import com.updavid.liveoci_hilt.features.friends.data.repository.FriendRequestRepositoryImpl
-import com.updavid.liveoci_hilt.features.friends.domain.repository.FriendRequestRepository
+import com.updavid.liveoci_hilt.features.friends.domain.repository.FriendRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ abstract class FriendRepositoryModule {
     @Binds
     abstract fun bindFriendRepository(
         impl: FriendRequestRepositoryImpl
-    ): FriendRequestRepository
+    ): FriendRepository
 }

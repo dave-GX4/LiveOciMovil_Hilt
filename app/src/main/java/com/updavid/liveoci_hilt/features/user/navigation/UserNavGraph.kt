@@ -6,9 +6,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.updavid.liveoci_hilt.core.navigation.Code
 import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
+import com.updavid.liveoci_hilt.core.navigation.Friends
 import com.updavid.liveoci_hilt.core.navigation.Login
 import com.updavid.liveoci_hilt.core.navigation.Profile
 import com.updavid.liveoci_hilt.core.navigation.ProfileEdit
+import com.updavid.liveoci_hilt.core.navigation.Requests
 import com.updavid.liveoci_hilt.core.navigation.Schedules
 import com.updavid.liveoci_hilt.core.navigation.Tastes
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileEditPage
@@ -46,6 +48,9 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
                 },
                 onNavigateToCodeFriend = {
                     navController.navigate(Code)
+                },
+                onNavigateToFriends = {
+                    navController.navigate(Friends)
                 },
                 onBack = {
                     navController.navigateUp()

@@ -1,11 +1,22 @@
 package com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers
 
 import com.updavid.liveoci_hilt.core.sse.dtos.CodeSSEDto
+import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.CodeResponseDto
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.FoundUserResponseDto
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
 
-fun CodeSSEDto.toDomain(): Code {
+fun CodeSSEDto.toDomain(recordId: String, currentUserId: String): Code {
+    return Code(
+        id = recordId,
+        userId = currentUserId,
+        code = this.code,
+        expiresAt = this.expiresAt,
+        regeneratedAt = this.regeneratedAt
+    )
+}
+
+fun CodeResponseDto.toDomain(): Code {
     return Code(
         id = this.id,
         userId = this.userId,

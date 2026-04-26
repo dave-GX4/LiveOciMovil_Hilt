@@ -108,7 +108,7 @@ fun CodePage(
         ) {
             SectionHeader(
                 title = "Mi código de amistad",
-                description = "Comparte este código con tus amigos para que puedan agregarte directamente."
+                description = "Comparte este código con tus amigos para que puedan buscar."
             )
 
             when {
@@ -135,7 +135,7 @@ fun CodePage(
                     viewModel.onSearchQueryChange(it.uppercase())
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Ej: O1KJ-KMWV-PEW", color = Color.Gray) },
+                placeholder = { Text("Ingresa un codigo de amistad", color = Color.Gray) },
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(

@@ -1,9 +1,11 @@
 package com.updavid.liveoci_hilt.features.friends.data.datasource.remote.mapper
 
 import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.response.FriendRequestResponseDto
+import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.response.FriendsResponseDto
+import com.updavid.liveoci_hilt.features.friends.domain.entity.Friend
 import com.updavid.liveoci_hilt.features.friends.domain.entity.FriendRequest
 
-fun FriendRequestResponseDto.toDomain(): FriendRequest{
+fun FriendRequestResponseDto.toDomain(): FriendRequest {
     return FriendRequest(
         id = this.id,
         requesterId = this.requesterId,
@@ -11,5 +13,15 @@ fun FriendRequestResponseDto.toDomain(): FriendRequest{
         requesterAvatarUrl = this.requesterAvatarUrl,
         status = this.status,
         createdAt = this.createdAt
+    )
+}
+
+fun FriendsResponseDto.toDomain(): Friend{
+    return Friend(
+        friendshipId = this.friendshipId,
+        userId = this.userId,
+        name = this.name,
+        avatarUrl = this.avatarUrl,
+        friendsSince = this.friendsSince
     )
 }
