@@ -32,13 +32,14 @@ class CodeViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
+                // Al llamar esto, el repositorio hará el GET y luego el SSE de forma transparente
                 codeUseCases.streamCodeOfUser()
                     .catch { e ->
-                        // Si en caso se cae la conexión SSE
                         _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
                     }
                     .collect { newCode ->
-                        // Cada vez que el server mande un código, esto se actualiza
+                        // La primera vez que pase por aquí, será la respuesta del GET.
+                        // Las siguientes veces, serán los eventos del SSE.
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -87,7 +88,6 @@ class CodeViewModel @Inject constructor(
                 // Mostrar mensaje de éxito en el Snackbar
                 _uiState.update { it.copy(searchErrorMessage = response.message) }
 
-                // Opción rápida: Volver a buscar al usuario para que se actualice la tarjeta
                 searchUser()
             } catch (e: Exception) {
                 _uiState.update { it.copy(searchErrorMessage = e.message) }

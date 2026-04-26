@@ -28,3 +28,5 @@ object Analyzer
 object Splash
 @Serializable
 object Friends
+@Serializable
+object Requests

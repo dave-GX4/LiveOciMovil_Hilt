@@ -6,7 +6,7 @@ data class FriendRequest(
     val id: String,
     val requesterId: String,
     val requesterName: String,
-    val requesterAvatarUrl: String,
+    val requesterAvatarUrl: String?,
     val status: String,
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime
 )

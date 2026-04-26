@@ -52,10 +52,10 @@ object NetworkModule {
     @Provides
     @Singleton
     @LiveOciRetrofit
-    fun provideLiveOciRetrofit(): Retrofit {
+    fun provideLiveOciRetrofit(gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api-live-oci-production.up.railway.app/api/v2/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 }
