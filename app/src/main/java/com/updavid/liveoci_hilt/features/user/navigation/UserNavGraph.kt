@@ -31,7 +31,7 @@ class UserNavGraph @Inject constructor(): FeatureNavGraph {
 
             ProfilePage(
                 viewModel = viewModel,
-                onNavigateToEditInterests = {
+                onNavigateToUser = {
                     navController.navigate(ProfileEdit)
                 },
                 onLogoutSuccess = {

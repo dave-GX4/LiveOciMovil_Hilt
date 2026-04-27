@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.features.auth.domain.usecases.AuthUseCases
+import com.updavid.liveoci_hilt.features.auth.domain.usecases.VibrateUseCase
 import com.updavid.liveoci_hilt.features.auth.presentation.pages.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCases: AuthUseCases
+    private val authUseCases: AuthUseCases,
+    private val vibrateUseCase: VibrateUseCase
 ): ViewModel(){
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
@@ -61,6 +63,8 @@ class LoginViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
 
             result.onSuccess { authMessage ->
+                vibrateUseCase()
+
                 _uiState.update { LoginUiState(isLoginSuccessful = true) }
 
             }.onFailure { exception ->

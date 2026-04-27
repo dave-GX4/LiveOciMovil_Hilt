@@ -3,10 +3,14 @@ package com.updavid.liveoci_hilt.features.user.presentation.viewmodel
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.updavid.liveoci_hilt.core.hardware.domian.states.BiometricResult
+import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.CreateImageUriUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.GetLocalPhotoUrlUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
+import com.updavid.liveoci_hilt.features.user.domain.usescases.user.AuthenticateBiometricUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +27,9 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userUseCases: UserUseCases,
     private val photoUseCases: PhotoUseCases,
-    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase
+    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase,
+    private val createImageUriUseCase: CreateImageUriUseCase,
+    private val authenticateBiometricUseCase: AuthenticateBiometricUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
@@ -111,6 +117,30 @@ class ProfileViewModel @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    fun getNewTempCameraUri(): Uri {
+        return createImageUriUseCase()
+    }
+
+    fun onSensitiveActionRequested(
+        activity: FragmentActivity,
+        onSuccess: () -> Unit
+    ) {
+        viewModelScope.launch {
+            // Verificamos si el hardware está disponible
+            if (authenticateBiometricUseCase.isAvailable()) {
+                // Lanzamos el diálogo
+                val result = authenticateBiometricUseCase(activity)
+                if (result == BiometricResult.SUCCESS) {
+                    onSuccess()
+                } else {
+                    _uiState.update { it.copy(isError = "Autenticación fallida") }
+                }
+            } else {
+                onSuccess()
+            }
         }
     }
 

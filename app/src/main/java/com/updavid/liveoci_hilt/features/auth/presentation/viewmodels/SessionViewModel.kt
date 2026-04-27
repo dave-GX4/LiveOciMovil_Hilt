@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.core.navigation.Home
 import com.updavid.liveoci_hilt.core.navigation.Login
 import com.updavid.liveoci_hilt.features.auth.domain.usecases.CheckSessionUseCase
+import com.updavid.liveoci_hilt.features.auth.domain.usecases.VibrateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SessionViewModel @Inject constructor(
-    private val checkSessionUseCase: CheckSessionUseCase
+    private val checkSessionUseCase: CheckSessionUseCase,
+    private val vibrateUseCase: VibrateUseCase
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow<Any?>(null)
@@ -24,6 +26,10 @@ class SessionViewModel @Inject constructor(
         viewModelScope.launch {
             val isLoggedIn = checkSessionUseCase()
             Log.d("AUTH_TEST", "¿El usuario está logueado?: $isLoggedIn")
+
+            if (isLoggedIn) {
+                vibrateUseCase(200)
+            }
 
             _startDestination.value = if (isLoggedIn) Home else Login
         }
