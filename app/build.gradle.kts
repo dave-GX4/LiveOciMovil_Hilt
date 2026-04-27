@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     // SSE
     implementation(libs.okhttp.sse)
+    // Autenticación Biometrica
+    implementation(libs.androidx.biometric)
     // KSP
     ksp(libs.hilt.compiler)
     ksp(libs.room.compiler)

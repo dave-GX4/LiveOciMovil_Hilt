@@ -54,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.updavid.liveoci_hilt.core.ui.atoms.SectionTitle
 import com.updavid.liveoci_hilt.features.user.presentation.components.HeaderProfileSection
@@ -67,7 +68,7 @@ fun ProfilePage(
     viewModel: ProfileViewModel,
     onNavigateTastes: () -> Unit,
     onNavigateSchedules: () -> Unit,
-    onNavigateToEditInterests: () -> Unit,
+    onNavigateToUser: () -> Unit,
     onNavigateToFriends: () -> Unit,
     onNavigateToCodeFriend: () -> Unit,
     onLogoutSuccess: () -> Unit,
@@ -201,7 +202,16 @@ fun ProfilePage(
                 ProfileOptionItem(
                     icon = Icons.Default.PrivacyTip,
                     title = "Administrar Usuario",
-                    onClick = onNavigateToEditInterests,
+                    onClick = {
+                        val activity = context as? FragmentActivity
+                        if (activity != null) {
+                            viewModel.onSensitiveActionRequested(activity) {
+                                onNavigateToUser()
+                            }
+                        } else {
+                            onNavigateToUser()
+                        }
+                    },
                     iconColor = Color(0xFFF7E7FE),
                     iconTint = Color(0xFFAA0BF4)
                 )
@@ -259,7 +269,16 @@ fun ProfilePage(
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
-                    onClick = viewModel::onLogout,
+                    onClick = {
+                        val activity = context as? FragmentActivity
+                        if (activity != null) {
+                            viewModel.onSensitiveActionRequested(activity) {
+                                viewModel.onLogout()
+                            }
+                        } else {
+                            viewModel.onLogout()
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
