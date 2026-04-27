@@ -3,6 +3,7 @@ package com.updavid.liveoci_hilt.core.di
 import android.content.Context
 import androidx.room.Room
 import com.updavid.liveoci_hilt.core.database.AppDataBase
+import com.updavid.liveoci_hilt.core.database.dao.LeisureActivityDao
 import com.updavid.liveoci_hilt.core.database.dao.ScheduleDao
 import com.updavid.liveoci_hilt.core.database.dao.UserDao
 import dagger.Module
@@ -28,4 +29,7 @@ object DataBaseModule {
     fun provideScheduleDao(db: AppDataBase): ScheduleDao = db.scheduleDao()
     @Provides
     fun provideUserDao(db: AppDataBase): UserDao = db.userDao()
+
+    @Provides
+    fun provideLeisureActivityDao(db: AppDataBase): LeisureActivityDao = db.leisureActivityDao()
 }

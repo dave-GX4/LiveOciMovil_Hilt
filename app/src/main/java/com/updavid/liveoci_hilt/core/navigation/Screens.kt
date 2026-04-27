@@ -30,3 +30,7 @@ object Splash
 object Friends
 @Serializable
 object Requests
+@Serializable
+object Activities
+@Serializable
+object FormActivity
