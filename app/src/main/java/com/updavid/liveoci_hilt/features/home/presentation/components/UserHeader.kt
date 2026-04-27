@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
@@ -37,12 +36,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import coil.request.CachePolicy
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.updavid.liveoci_hilt.features.home.domain.entity.HomeNotification
+import com.updavid.liveoci_hilt.features.home.domain.entity.Notification
+import com.updavid.liveoci_hilt.features.home.presentation.components.NotificationDropdownMenu
 
 @Composable
 fun UserHeader(
@@ -50,12 +48,12 @@ fun UserHeader(
     greetingIcon: ImageVector,
     userName: String?,
     userPhotoUrl: String?,
-    notifications: List<HomeNotification>,
-    unreadNotificationCount: Int,
-    onNotificationClick: (HomeNotification) -> Unit,
-    onMarkAllNotificationsRead: () -> Unit
+    notifications: List<Notification>,
+    onMarkAllNotificationsRead: () -> Unit = {},
+    onNotificationClick: (Notification) -> Unit
 ) {
-    var showNotifications by remember { mutableStateOf(false) }
+    var isNotificationMenuExpanded by remember { mutableStateOf(false) }
+    val hasUnread = notifications.any { !it.isRead }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -68,49 +66,19 @@ fun UserHeader(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Box(modifier = Modifier.size(56.dp)) {
-                SubcomposeAsyncImage(
+                AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(userPhotoUrl)
-                        .addHeader("Cache-Control", "no-cache")
                         .crossfade(true)
-                        .memoryCachePolicy(CachePolicy.DISABLED)
-                        .diskCachePolicy(CachePolicy.DISABLED)
                         .build(),
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                            shape = CircleShape
-                        )
-                ) {
-                    val state = painter.state
+                        .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), CircleShape)
+                )
 
-                    if (
-                        state is AsyncImagePainter.State.Loading ||
-                        state is AsyncImagePainter.State.Error ||
-                        userPhotoUrl == null
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-                    } else {
-                        SubcomposeAsyncImageContent()
-                    }
-                }
 
                 Box(
                     modifier = Modifier
@@ -118,11 +86,7 @@ fun UserHeader(
                         .align(Alignment.BottomEnd)
                         .offset(x = (-2).dp, y = (-2).dp)
                         .background(Color(0xFF4CAF50), CircleShape)
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.background,
-                            shape = CircleShape
-                        )
+                        .border(2.dp, MaterialTheme.colorScheme.background, CircleShape)
                 )
             }
 
@@ -137,16 +101,11 @@ fun UserHeader(
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
-
                     Icon(
                         imageVector = greetingIcon,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = if (greeting.contains("noches")) {
-                            Color(0xFF9FA8DA)
-                        } else {
-                            Color(0xFFFFB74D)
-                        }
+                        tint = if (greeting.contains("noches")) Color(0xFF9FA8DA) else Color(0xFFFFB74D)
                     )
                 }
 
@@ -161,51 +120,44 @@ fun UserHeader(
             }
         }
 
-        IconButton(
-            onClick = {
-                showNotifications = true
-            },
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .size(48.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = CircleShape
-                )
-        ) {
-            BadgedBox(
-                badge = {
-                    if (unreadNotificationCount > 0) {
-                        Badge {
-                            Text(text = unreadNotificationCount.toString())
+        Box {
+            IconButton(
+                onClick = { isNotificationMenuExpanded = true },
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), CircleShape)
+            ) {
+                val hasUnread = notifications.any { !it.isRead }
+
+                BadgedBox(
+                    badge = {
+                        if (hasUnread) {
+                            Badge(containerColor = MaterialTheme.colorScheme.error)
                         }
                     }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Notificaciones",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notificaciones",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
             }
-        }
-    }
 
-    if (showNotifications) {
-        NotificationBottomSheet(
-            notifications = notifications,
-            unreadCount = unreadNotificationCount,
-            onDismiss = {
-                showNotifications = false
-            },
-            onNotificationClick = { notification ->
-                onNotificationClick(notification)
-                showNotifications = false
-            },
-            onMarkAllNotificationsRead = {
-                onMarkAllNotificationsRead()
-                showNotifications = false
-            }
-        )
+            NotificationDropdownMenu(
+                expanded = isNotificationMenuExpanded,
+                onDismissRequest = { isNotificationMenuExpanded = false },
+                notifications = notifications,
+                onMarkAllRead = onMarkAllNotificationsRead,
+                onNotificationClick = { notification ->
+                    onNotificationClick(notification)
+                    isNotificationMenuExpanded = false
+                },
+                onViewAllClick = {
+                    isNotificationMenuExpanded = false
+                }
+            )
+        }
     }
 }

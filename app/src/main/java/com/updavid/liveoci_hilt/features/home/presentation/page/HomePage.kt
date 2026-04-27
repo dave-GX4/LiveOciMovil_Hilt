@@ -36,7 +36,6 @@ fun HomePage(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
-    val recommendedActivity = uiState.recommendedActivity
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -58,9 +57,14 @@ fun HomePage(
                 userName = uiState.userName,
                 userPhotoUrl = uiState.userPhotoUrl,
                 notifications = uiState.notifications,
-                unreadNotificationCount = uiState.unreadNotificationCount,
-                onNotificationClick = viewModel::markNotificationRead,
-                onMarkAllNotificationsRead = viewModel::markAllNotificationsRead
+                onMarkAllNotificationsRead = {
+                    viewModel.markAllNotificationsRead()
+                },
+                onNotificationClick = { clickedNotification ->
+                    if (!clickedNotification.isRead) {
+                        viewModel.markNotificationRead(clickedNotification.id)
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -76,15 +80,12 @@ fun HomePage(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-
                 Text(
                     text = "Actualizar",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        viewModel.fetchRecommendedActivity()
-                    }
+                    modifier = Modifier.clickable { viewModel.fetchRecommendedActivity() }
                 )
             }
 
@@ -98,17 +99,12 @@ fun HomePage(
                             .height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
-
                 uiState.isError != null -> {
                     Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer
-                        ),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
@@ -118,11 +114,8 @@ fun HomePage(
                         )
                     }
                 }
-
-                recommendedActivity != null -> {
-                    RecommendedCard(
-                        activity = recommendedActivity
-                    )
+                uiState.recommendedActivity != null -> {
+                    RecommendedCard(activity = uiState.recommendedActivity!!)
                 }
             }
 

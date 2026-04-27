@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.updavid.liveoci_hilt.features.bored.domain.entity.BoredActivity
-import com.updavid.liveoci_hilt.features.home.domain.entity.HomeNotification
+import com.updavid.liveoci_hilt.features.home.domain.entity.Notification
 
 data class HomeUiState(
     val isLoading: Boolean = false,
@@ -12,17 +12,11 @@ data class HomeUiState(
 
     val recommendedActivity: BoredActivity? = null,
 
-    val userId: String? = null,
     val userName: String? = null,
     val userPhotoUrl: String? = null,
-
     val greeting: String = "",
     val greetingIcon: ImageVector = Icons.Default.WbSunny,
 
-    val notifications: List<HomeNotification> = emptyList(),
-    val isLoadingNotifications: Boolean = false,
-    val notificationError: String? = null
-) {
-    val unreadNotificationCount: Int
-        get() = notifications.count { !it.isRead }
-}
+    val notifications: List<Notification> = emptyList(),
+    val isNotificationsLoading: Boolean = false
+)

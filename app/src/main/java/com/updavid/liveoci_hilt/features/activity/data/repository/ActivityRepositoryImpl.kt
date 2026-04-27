@@ -13,6 +13,7 @@ import com.updavid.liveoci_hilt.features.activity.domain.entity.ActivityMessage
 import com.updavid.liveoci_hilt.features.activity.domain.entity.LeisureRecord
 import com.updavid.liveoci_hilt.features.activity.domain.entity.UpdateLeisureRequest
 import com.updavid.liveoci_hilt.features.activity.domain.repository.ActivityRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -159,6 +160,7 @@ class ActivityRepositoryImpl @Inject constructor(
             Result.success(response.toDomain())
 
         } catch (e: HttpException) {
+            delay(800)
             rollbackRoom(id, backupRecord)
 
             val errorJsonString = e.response()?.errorBody()?.string()
@@ -167,12 +169,14 @@ class ActivityRepositoryImpl @Inject constructor(
             Result.failure(Exception(errorMessage))
 
         } catch (e: IOException) {
+            delay(800)
             rollbackRoom(id, backupRecord)
 
             Log.e("ActivityRepository", "Sin internet: ${e.message}")
             Result.failure(Exception("Error de conexión, revisa tu internet."))
 
         } catch (e: Exception) {
+            delay(800)
             rollbackRoom(id, backupRecord)
 
             Log.e("ActivityRepository", "Error interno: ${e.message}", e)
