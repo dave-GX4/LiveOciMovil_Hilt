@@ -11,4 +11,8 @@ data class ActivitiesUiState(
 
     val isReset: Boolean = false,
     val isLoading: Boolean = false,
+
+    val searchQuery: String = "",
+    val selectedDate: String? = null,
+    val activityToDelete: String? = null
 )

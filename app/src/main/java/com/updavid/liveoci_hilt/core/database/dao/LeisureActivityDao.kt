@@ -33,4 +33,14 @@ interface LeisureActivityDao {
 
     @Query("DELETE FROM leisure_records")
     suspend fun clearAllLeisureRecords()
+
+    @Query("DELETE FROM activities WHERE uuid = :activityId")
+    suspend fun deleteActivityById(activityId: String)
+
+    @Query("SELECT * FROM leisure_records WHERE uuid = :id")
+    suspend fun getLeisureRecordById(id: String): LeisureRecordEntity?
+
+    // Para modificar (y hacer rollback)
+    @Query("UPDATE leisure_records SET status = :status, satisfaction = :satisfaction, startTime = :startTime, endTime = :endTime WHERE uuid = :id")
+    suspend fun updateLeisureRecordStatus(id: String, satisfaction: Int, status: String, startTime: String, endTime: String)
 }

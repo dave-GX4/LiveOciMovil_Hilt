@@ -2,6 +2,7 @@ package com.updavid.liveoci_hilt.features.activity.domain.repository
 
 import com.updavid.liveoci_hilt.features.activity.domain.entity.ActivityMessage
 import com.updavid.liveoci_hilt.features.activity.domain.entity.LeisureRecord
+import com.updavid.liveoci_hilt.features.activity.domain.entity.UpdateLeisureRequest
 import kotlinx.coroutines.flow.Flow
 
 interface ActivityRepository {
@@ -13,7 +14,8 @@ interface ActivityRepository {
         durationMinutes: Int,
         socialType: String
     ) : ActivityMessage
-    suspend fun deleteActivity(): ActivityMessage
+    suspend fun deleteActivity(id: String): ActivityMessage
     suspend fun syncActivitiesFromRemote()
     fun getActivitiesStream(): Flow<List<LeisureRecord>>
+    suspend fun updateLeisureRecord(id: String, request: UpdateLeisureRequest): Result<ActivityMessage>
 }

@@ -5,4 +5,5 @@ data class ActivityUseCases(
     val deleteActivity: DeleteActivityUseCase,
     val getAllActivitiesRemote: GetActivitiesRemoteUseCase,
     val getAllActivitiesRoom: GetActivitiesRoomUseCase,
+    val updateLeisure: UpdateLeisureUseCase
 )

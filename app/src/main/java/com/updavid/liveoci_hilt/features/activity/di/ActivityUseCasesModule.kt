@@ -6,6 +6,7 @@ import com.updavid.liveoci_hilt.features.activity.domain.usecases.CreateActivity
 import com.updavid.liveoci_hilt.features.activity.domain.usecases.DeleteActivityUseCase
 import com.updavid.liveoci_hilt.features.activity.domain.usecases.GetActivitiesRemoteUseCase
 import com.updavid.liveoci_hilt.features.activity.domain.usecases.GetActivitiesRoomUseCase
+import com.updavid.liveoci_hilt.features.activity.domain.usecases.UpdateLeisureUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,8 @@ object ActivityUseCasesModule {
             createActivity = CreateActivityUseCase(repository),
             deleteActivity = DeleteActivityUseCase(repository),
             getAllActivitiesRemote = GetActivitiesRemoteUseCase(repository),
-            getAllActivitiesRoom = GetActivitiesRoomUseCase(repository)
+            getAllActivitiesRoom = GetActivitiesRoomUseCase(repository),
+            updateLeisure = UpdateLeisureUseCase(repository)
         )
     }
 }

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.CreateImageUriUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.GetLocalPhotoUrlUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
 import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userUseCases: UserUseCases,
     private val photoUseCases: PhotoUseCases,
-    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase
+    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase,
+    private val createImageUriUseCase: CreateImageUriUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
@@ -112,6 +114,10 @@ class ProfileViewModel @Inject constructor(
             e.printStackTrace()
             null
         }
+    }
+
+    fun getNewTempCameraUri(): Uri {
+        return createImageUriUseCase()
     }
 
     fun onLogout() {

@@ -1,5 +1,6 @@
 package com.updavid.liveoci_hilt.features.user.presentation.page
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SettingsAccessibility
 import androidx.compose.material.icons.filled.SupervisorAccount
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,11 +38,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,12 +76,24 @@ fun ProfilePage(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    var showImageSourceDialog by remember { mutableStateOf(false) }
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) {
-            // Si el usuario seleccionó una imagen, la subimos
             viewModel.uploadProfilePhoto(context, uri)
+        }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempCameraUri?.let { uri ->
+                viewModel.uploadProfilePhoto(context, uri)
+            }
         }
     }
 
@@ -83,6 +101,34 @@ fun ProfilePage(
         if (uiState.isSuccess == "Sesión cerrada") {
             onLogoutSuccess()
         }
+    }
+
+    if (showImageSourceDialog) {
+        AlertDialog(
+            onDismissRequest = { showImageSourceDialog = false },
+            title = { Text("Actualizar foto de perfil") },
+            text = { Text("¿Desde dónde quieres subir la foto?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showImageSourceDialog = false
+                    val newUri = viewModel.getNewTempCameraUri()
+                    tempCameraUri = newUri
+                    cameraLauncher.launch(newUri)
+                }) {
+                    Text("Cámara")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showImageSourceDialog = false
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }) {
+                    Text("Galería")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -119,9 +165,7 @@ fun ProfilePage(
                     ocio = uiState.user?.leisureType ?: "Sin especificar",
                     photoUrl = uiState.userPhotoUrl,
                     onCameraClick = {
-                        photoPickerLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
+                        showImageSourceDialog = true
                     }
                 )
 

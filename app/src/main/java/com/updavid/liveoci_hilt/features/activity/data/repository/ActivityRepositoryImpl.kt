@@ -2,15 +2,16 @@ package com.updavid.liveoci_hilt.features.activity.data.repository
 
 import android.util.Log
 import com.updavid.liveoci_hilt.core.database.dao.LeisureActivityDao
+import com.updavid.liveoci_hilt.core.database.entities.LeisureRecordEntity
 import com.updavid.liveoci_hilt.core.datastore.DataStoreService
 import com.updavid.liveoci_hilt.features.activity.data.datasource.remote.api.ActivityLiveOciApi
 import com.updavid.liveoci_hilt.features.activity.data.datasource.remote.mapper.toActivityEntity
 import com.updavid.liveoci_hilt.features.activity.data.datasource.remote.mapper.toDomain
 import com.updavid.liveoci_hilt.features.activity.data.datasource.remote.mapper.toLeisureEntity
 import com.updavid.liveoci_hilt.features.activity.data.datasource.remote.models.request.ActivityRequestDto
-import com.updavid.liveoci_hilt.features.activity.domain.entity.Activity
 import com.updavid.liveoci_hilt.features.activity.domain.entity.ActivityMessage
 import com.updavid.liveoci_hilt.features.activity.domain.entity.LeisureRecord
+import com.updavid.liveoci_hilt.features.activity.domain.entity.UpdateLeisureRequest
 import com.updavid.liveoci_hilt.features.activity.domain.repository.ActivityRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -52,6 +53,7 @@ class ActivityRepositoryImpl @Inject constructor(
 
         } catch (e: HttpException) {
             val errorJsonString = e.response()?.errorBody()?.string()
+            Log.e("ActivityRepository", "Error HTTP del servidor (Crudo): $errorJsonString")
             val errorMessage = try {
                 JSONObject(errorJsonString).getString("message")
             } catch (jsonException: Exception) {
@@ -66,8 +68,30 @@ class ActivityRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteActivity(): ActivityMessage {
-        TODO("Not yet implemented")
+    override suspend fun deleteActivity(id: String): ActivityMessage {
+        return try {
+            val response = api.deleteActivityRemote(id)
+
+            dao.deleteActivityById(id)
+
+            response.toDomain()
+
+        } catch (e: HttpException) {
+            val errorJsonString = e.response()?.errorBody()?.string()
+
+            Log.e("ActivityRepository", "Error HTTP del servidor (Crudo): $errorJsonString")
+            val errorMessage = try {
+                JSONObject(errorJsonString).getString("message")
+            } catch (jsonException: Exception) {
+                "Error desconocido del servidor al eliminar."
+            }
+            throw Exception(errorMessage)
+
+        } catch (e: IOException) {
+            throw Exception("Error de conexión, revisa tu internet.")
+        } catch (e: Exception) {
+            throw Exception(e.message ?: "Ocurrió un error inesperado al eliminar.")
+        }
     }
 
     override suspend fun syncActivitiesFromRemote() {
@@ -112,5 +136,60 @@ class ActivityRepositoryImpl @Inject constructor(
                 exception.printStackTrace()
                 emit(emptyList())
             }
+    }
+
+    override suspend fun updateLeisureRecord(
+        id: String,
+        request: UpdateLeisureRequest
+    ): Result<ActivityMessage> {
+
+        val backupRecord = dao.getLeisureRecordById(id)
+
+        return try {
+            dao.updateLeisureRecordStatus(
+                id = id,
+                satisfaction = request.satisfaction,
+                status = request.status,
+                startTime = request.startTime,
+                endTime = request.endTime
+            )
+
+            val response = api.updateActivityLeisure(id, request)
+
+            Result.success(response.toDomain())
+
+        } catch (e: HttpException) {
+            rollbackRoom(id, backupRecord)
+
+            val errorJsonString = e.response()?.errorBody()?.string()
+            Log.e("ActivityRepository", "Error HTTP: $errorJsonString")
+            val errorMessage = try { JSONObject(errorJsonString).getString("message") } catch (ex: Exception) { "Error en el servidor." }
+            Result.failure(Exception(errorMessage))
+
+        } catch (e: IOException) {
+            rollbackRoom(id, backupRecord)
+
+            Log.e("ActivityRepository", "Sin internet: ${e.message}")
+            Result.failure(Exception("Error de conexión, revisa tu internet."))
+
+        } catch (e: Exception) {
+            rollbackRoom(id, backupRecord)
+
+            Log.e("ActivityRepository", "Error interno: ${e.message}", e)
+            Result.failure(Exception(e.message ?: "Ocurrió un error inesperado al calificar."))
+        }
+    }
+
+    private suspend fun rollbackRoom(id: String, backupRecord: LeisureRecordEntity?) {
+        if (backupRecord != null) {
+            dao.updateLeisureRecordStatus(
+                id = id,
+                satisfaction = backupRecord.satisfaction,
+                status = backupRecord.status,
+                startTime = backupRecord.startTime,
+                endTime = backupRecord.endTime
+            )
+            Log.d("ActivityRepository", "Rollback ejecutado con éxito en Room para el ID: $id")
+        }
     }
 }
