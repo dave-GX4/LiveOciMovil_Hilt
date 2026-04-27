@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.GetLocalPhotoUrlUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
 import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import com.updavid.liveoci_hilt.features.user.presentation.page.ProfileUiState
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userUseCases: UserUseCases,
-    private val photoUseCases: PhotoUseCases
+    private val photoUseCases: PhotoUseCases,
+    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
@@ -34,6 +36,13 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             userUseCases.getUserRoom().collect { user ->
                 _uiState.update { it.copy(user = user) }
+            }
+        }
+
+        viewModelScope.launch {
+            getLocalPhotoUrlUseCase().collect { photoUrl ->
+                Log.d("HomeViewModel", "DataStore emitió nueva URL: $photoUrl")
+                _uiState.update { it.copy(userPhotoUrl = photoUrl) }
             }
         }
     }
@@ -52,11 +61,8 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update { it.copy(isError = error.message) }
             }
 
-            photoResult.onSuccess { photo ->
-                val freshUrl = "${photo.url}?t=${System.currentTimeMillis()}"
-                _uiState.update { it.copy(userPhotoUrl = freshUrl) }
-            }.onFailure {
-                Log.e("ProfileViewModel", "No se pudo actualizar la foto remotamente.")
+            photoResult.onFailure { error ->
+                Log.e("ProfileViewModel", "Error al sincronizar foto: ${error.message}")
             }
 
             _uiState.update { it.copy(isRefresh = false) }
@@ -68,32 +74,27 @@ class ProfileViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, isError = null) }
             try {
                 val file = getFileFromUri(context, imageUri)
-
                 if (file == null) {
                     _uiState.update { it.copy(isLoading = false, isError = "No se pudo procesar la imagen.") }
                     return@launch
                 }
 
                 photoUseCases.savePhoto(file).onSuccess {
-                    val photoResult = photoUseCases.getPhoto()
+                    val refreshResult = photoUseCases.getPhoto()
 
-                    photoResult.onSuccess { photo ->
-                        val freshUrl = "${photo.url}?t=${System.currentTimeMillis()}"
+                    refreshResult.onSuccess {
                         _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                isSuccess = "Foto actualizada",
-                                userPhotoUrl = freshUrl
-                            )
+                            it.copy(isLoading = false, isSuccess = "Foto actualizada")
                         }
                     }.onFailure { error ->
-                        _uiState.update { it.copy(isLoading = false, isError = "Foto subida, pero error al recargar: ${error.message}") }
+                        _uiState.update { it.copy(isLoading = false, isError = "Error al refrescar: ${error.message}") }
                     }
+
                 }.onFailure { error ->
                     _uiState.update { it.copy(isLoading = false, isError = error.message) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, isError = "Error al procesar la imagen.") }
+                _uiState.update { it.copy(isLoading = false, isError = "Error inesperado.") }
             }
         }
     }

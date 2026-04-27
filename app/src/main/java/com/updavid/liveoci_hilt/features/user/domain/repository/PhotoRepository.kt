@@ -5,6 +5,6 @@ import com.updavid.liveoci_hilt.features.user.domain.entity.Photo
 import java.io.File
 
 interface PhotoRepository {
-    suspend fun getPhotoUserRemote(): Photo
+    suspend fun getPhotoUserRemote()
     suspend fun saveOrUpdatePhotoUserRemote(imageFile: File): Message
 }

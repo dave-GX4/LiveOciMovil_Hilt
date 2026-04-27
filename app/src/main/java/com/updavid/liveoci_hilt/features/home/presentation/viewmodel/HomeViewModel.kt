@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.features.bored.domain.usecases.BoredActivitiesUseCases
 import com.updavid.liveoci_hilt.features.home.presentation.page.HomeUiState
+import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.GetLocalPhotoUrlUseCase
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
 import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val boredActivitiesUseCases: BoredActivitiesUseCases,
     private val userUseCases: UserUseCases,
-    private val photoUseCases: PhotoUseCases
+    private val photoUseCases: PhotoUseCases,
+    private val getLocalPhotoUrlUseCase: GetLocalPhotoUrlUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
@@ -79,6 +81,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             userUseCases.getUserRoom().collect { user ->
                 _uiState.update { it.copy(userName = user?.name) }
+            }
+        }
+
+        viewModelScope.launch {
+            getLocalPhotoUrlUseCase().collect { photoUrl ->
+                Log.d("HomeViewModel", "DataStore emitió nueva URL: $photoUrl")
+                _uiState.update { it.copy(userPhotoUrl = photoUrl) }
             }
         }
     }

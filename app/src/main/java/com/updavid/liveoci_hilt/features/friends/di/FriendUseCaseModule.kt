@@ -4,6 +4,7 @@ import com.updavid.liveoci_hilt.features.friends.domain.repository.FriendReposit
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.friend.DeleteFriendUseCase
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.friend.FriendUseCases
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.friend.GetAllFriendsUseCase
+import com.updavid.liveoci_hilt.features.friends.domain.usecases.friend.StreamFriendUpdatesUseCase
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.request.CancelFriendRequestUseCase
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.request.FriendRequestUseCases
 import com.updavid.liveoci_hilt.features.friends.domain.usecases.request.GetFriendRequestUseCase
@@ -31,7 +32,8 @@ object FriendUseCaseModule {
     fun providerFriendUseCases(repository: FriendRepository): FriendUseCases{
         return FriendUseCases(
             deleteFriend = DeleteFriendUseCase(repository),
-            getAllFriends = GetAllFriendsUseCase(repository)
+            getAllFriends = GetAllFriendsUseCase(repository),
+            streamFriendUpdates = StreamFriendUpdatesUseCase(repository)
         )
     }
 }
