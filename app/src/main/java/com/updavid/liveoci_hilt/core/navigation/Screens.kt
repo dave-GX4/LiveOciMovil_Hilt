@@ -28,3 +28,9 @@ object Analyzer
 object Splash
 @Serializable
 object Friends
+@Serializable
+object Requests
+@Serializable
+object Activities
+@Serializable
+object FormActivity

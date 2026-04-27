@@ -14,16 +14,14 @@ class CreateActivityUseCase @Inject constructor(
         category: String,
         durationMinutes: Int,
         socialType: String
-    ): Result<ActivityMessage>{
-        val response = repository.createActivity(
-            name,
-            description,
-            type,
-            category,
-            durationMinutes,
-            socialType
-        )
-
-        return Result.success(response)
+    ): Result<ActivityMessage> {
+        return try {
+            val response = repository.createActivity(
+                name, description, type, category, durationMinutes, socialType
+            )
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

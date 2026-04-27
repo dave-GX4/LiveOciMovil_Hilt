@@ -7,8 +7,8 @@ import javax.inject.Inject
 class DeleteActivityUseCase @Inject constructor(
     private val repository: ActivityRepository
 ) {
-    suspend operator fun invoke(id: String): Result<ActivityMessage>{
-        val response = repository.deleteActivity(id)
+    suspend operator fun invoke(): Result<ActivityMessage>{
+        val response = repository.deleteActivity()
 
         return Result.success(response)
     }

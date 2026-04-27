@@ -1,9 +1,7 @@
 package com.updavid.liveoci_hilt.features.code.navigation
 
-import CodeViewModel
-import androidx.compose.animation.AnimatedContentScope
+import com.updavid.liveoci_hilt.features.code.presentation.viewmodels.CodeViewModel
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -11,7 +9,6 @@ import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
 import com.updavid.liveoci_hilt.core.navigation.Code
 import com.updavid.liveoci_hilt.features.code.presentation.pages.CodePage
 import javax.inject.Inject
-
 
 class CodeNavGraph @Inject constructor() : FeatureNavGraph {
 
@@ -23,7 +20,10 @@ class CodeNavGraph @Inject constructor() : FeatureNavGraph {
             val viewModel: CodeViewModel = hiltViewModel()
 
             CodePage(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }

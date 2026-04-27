@@ -4,9 +4,7 @@ import android.util.Log
 import com.updavid.liveoci_hilt.core.datastore.DataStoreService
 import com.updavid.liveoci_hilt.features.user.data.datasource.remote.api.PhotoLiveOciApi
 import com.updavid.liveoci_hilt.features.user.data.datasource.remote.mapper.toDomain
-import com.updavid.liveoci_hilt.features.user.data.datasource.remote.models.response.PhotoResponseDto
 import com.updavid.liveoci_hilt.features.user.domain.entity.Message
-import com.updavid.liveoci_hilt.features.user.domain.entity.Photo
 import com.updavid.liveoci_hilt.features.user.domain.repository.PhotoRepository
 import kotlinx.coroutines.flow.first
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -23,16 +21,20 @@ class PhotoRepositoryImpl @Inject constructor(
     private val dataStore: DataStoreService
 ): PhotoRepository {
 
-    override suspend fun getPhotoUserRemote(): Photo {
+    override suspend fun getPhotoUserRemote() {
         try {
-            Log.d("AppDebug", "Repository: Pidiendo foto remota al backend...")
-            val userId = dataStore.getUserId().first()
-                ?: throw Exception("Sesión no válida")
-
+            val userId = dataStore.getUserId().first() ?: throw Exception("Sesión no válida")
             val responseDto = api.getPhotoUser(userId)
             val photo = responseDto.toDomain()
 
-            return photo
+            val currentLocalUrl = dataStore.getUserPhotoUrl().first()
+
+            if (currentLocalUrl != photo.url) {
+                Log.d("AppDebug", "Repository: La URL cambió, actualizando DataStore...")
+                dataStore.saveUserPhotoUrl(photo.url)
+            } else {
+                Log.d("AppDebug", "Repository: La URL es idéntica, no se actualiza para evitar parpadeos.")
+            }
 
         } catch (e: Exception) {
             Log.e("AppDebug", "Repository: Error obteniendo foto remota: ${e.message}")

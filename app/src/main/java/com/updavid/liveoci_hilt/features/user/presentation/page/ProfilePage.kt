@@ -22,8 +22,11 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.PersonSearch
+import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SettingsAccessibility
+import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -59,6 +62,8 @@ fun ProfilePage(
     onNavigateTastes: () -> Unit,
     onNavigateSchedules: () -> Unit,
     onNavigateToEditInterests: () -> Unit,
+    onNavigateToFriends: () -> Unit,
+    onNavigateToCodeFriend: () -> Unit,
     onLogoutSuccess: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -150,9 +155,34 @@ fun ProfilePage(
                 )
 
                 ProfileOptionItem(
-                    icon = Icons.Default.SettingsAccessibility,
+                    icon = Icons.Default.PrivacyTip,
                     title = "Administrar Usuario",
-                    onClick = onNavigateToEditInterests
+                    onClick = onNavigateToEditInterests,
+                    iconColor = Color(0xFFF7E7FE),
+                    iconTint = Color(0xFFAA0BF4)
+                )
+
+                SectionTitle(
+                    text = "Social",
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+                )
+
+                ProfileOptionItem(
+                    icon = Icons.Default.SupervisorAccount,
+                    title = "Amigos",
+                    onClick = onNavigateToFriends,
+                    iconColor = Color(0xFFE7FBFE),
+                    iconTint = Color(0xFF0BD8F4)
+                )
+
+                ProfileOptionItem(
+                    icon = Icons.Default.PersonSearch,
+                    title = "Busqueda y Codigo de amigo",
+                    onClick = onNavigateToCodeFriend,
+                    iconColor = Color(0xFFE7ECFE),
+                    iconTint = Color(0xFF2754F5)
                 )
 
                 SectionTitle(

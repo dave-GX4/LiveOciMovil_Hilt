@@ -5,5 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface DataStoreService {
     suspend fun saveUserId(id: String)
     fun getUserId(): Flow<String?>
+    suspend fun saveUserPhotoUrl(url: String)
+    fun getUserPhotoUrl(): Flow<String?>
     suspend fun clearSession()
 }

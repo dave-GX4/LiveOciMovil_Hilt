@@ -1,13 +1,13 @@
 package com.updavid.liveoci_hilt.features.activity.domain.entity
 
-import java.util.Date
-
 data class LeisureRecord(
-    val uuid: String,
-    val scheduleDate: Date,
+    val id: String,
+    val scheduleDate: String?,
     val startTime: String,
     val endTime: String,
-    val durationMinutes: Number,
-    val satisfaction: Number,
-    val status: String
+    val durationMinutes: Int,
+    val satisfaction: Int,
+    val status: String,
+    val activity: Activity,
+    val createdAt: String
 )
