@@ -8,26 +8,33 @@ import androidx.compose.material.icons.filled.WbTwilight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.updavid.liveoci_hilt.features.bored.domain.usecases.BoredActivitiesUseCases
+import com.updavid.liveoci_hilt.features.home.domain.entity.HomeNotification
+import com.updavid.liveoci_hilt.features.home.domain.entity.HomeNotificationSource
+import com.updavid.liveoci_hilt.features.home.domain.usecase.HomeUseCases
 import com.updavid.liveoci_hilt.features.home.presentation.page.HomeUiState
 import com.updavid.liveoci_hilt.features.user.domain.usescases.photo.PhotoUseCases
 import com.updavid.liveoci_hilt.features.user.domain.usescases.user.UserUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val boredActivitiesUseCases: BoredActivitiesUseCases,
     private val userUseCases: UserUseCases,
-    private val photoUseCases: PhotoUseCases
-): ViewModel() {
+    private val photoUseCases: PhotoUseCases,
+    private val homeUseCases: HomeUseCases
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
+    private var loadedNotificationsUserId: String? = null
 
     init {
         fetchRemoteData()
@@ -78,7 +85,19 @@ class HomeViewModel @Inject constructor(
     private fun observeLocalData() {
         viewModelScope.launch {
             userUseCases.getUserRoom().collect { user ->
-                _uiState.update { it.copy(userName = user?.name) }
+                val userId = user?.id
+
+                _uiState.update {
+                    it.copy(
+                        userId = userId,
+                        userName = user?.name
+                    )
+                }
+
+                if (!userId.isNullOrBlank() && loadedNotificationsUserId != userId) {
+                    loadedNotificationsUserId = userId
+                    loadNotifications(userId)
+                }
             }
         }
     }
@@ -91,11 +110,98 @@ class HomeViewModel @Inject constructor(
 
             result.onSuccess { activity ->
                 _uiState.update {
-                    it.copy(isLoading = false, recommendedActivity = activity)
+                    it.copy(
+                        isLoading = false,
+                        recommendedActivity = activity
+                    )
                 }
             }.onFailure { error ->
                 _uiState.update {
-                    it.copy(isLoading = false, isError = error.message)
+                    it.copy(
+                        isLoading = false,
+                        isError = error.message
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadNotifications(userId: String) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoadingNotifications = true,
+                    notificationError = null
+                )
+            }
+
+            try {
+                val notifications = homeUseCases.getHomeNotificationsUseCase(userId)
+
+                _uiState.update {
+                    it.copy(
+                        notifications = notifications,
+                        isLoadingNotifications = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoadingNotifications = false,
+                        notificationError = e.message ?: "Error al cargar notificaciones"
+                    )
+                }
+            }
+        }
+    }
+
+    fun markNotificationRead(notification: HomeNotification) {
+        viewModelScope.launch {
+            try {
+                if (notification.source == HomeNotificationSource.HTTP) {
+                    homeUseCases.markHomeNotificationReadUseCase(notification.id)
+                }
+
+                _uiState.update { state ->
+                    state.copy(
+                        notifications = state.notifications.map { currentNotification ->
+                            if (currentNotification.id == notification.id) {
+                                currentNotification.copy(isRead = true)
+                            } else {
+                                currentNotification
+                            }
+                        }
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        notificationError = e.message ?: "Error al marcar notificación"
+                    )
+                }
+            }
+        }
+    }
+
+    fun markAllNotificationsRead() {
+        val userId = _uiState.value.userId ?: return
+
+        viewModelScope.launch {
+            try {
+                homeUseCases.markAllHomeNotificationsReadUseCase(userId)
+
+                _uiState.update { state ->
+                    state.copy(
+                        notifications = state.notifications.map { notification ->
+                            notification.copy(isRead = true)
+                        }
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        notificationError = e.message ?: "Error al marcar todas las notificaciones"
+                    )
                 }
             }
         }

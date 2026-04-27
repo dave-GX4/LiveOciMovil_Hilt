@@ -15,11 +15,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,14 +42,21 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.updavid.liveoci_hilt.features.home.domain.entity.HomeNotification
 
 @Composable
 fun UserHeader(
     greeting: String,
     greetingIcon: ImageVector,
     userName: String?,
-    userPhotoUrl: String?
+    userPhotoUrl: String?,
+    notifications: List<HomeNotification>,
+    unreadNotificationCount: Int,
+    onNotificationClick: (HomeNotification) -> Unit,
+    onMarkAllNotificationsRead: () -> Unit
 ) {
+    var showNotifications by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -68,10 +81,19 @@ fun UserHeader(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f), CircleShape)
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            shape = CircleShape
+                        )
                 ) {
                     val state = painter.state
-                    if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error || userPhotoUrl == null) {
+
+                    if (
+                        state is AsyncImagePainter.State.Loading ||
+                        state is AsyncImagePainter.State.Error ||
+                        userPhotoUrl == null
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -90,14 +112,17 @@ fun UserHeader(
                     }
                 }
 
-
                 Box(
                     modifier = Modifier
                         .size(14.dp)
                         .align(Alignment.BottomEnd)
                         .offset(x = (-2).dp, y = (-2).dp)
                         .background(Color(0xFF4CAF50), CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.background, CircleShape)
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.background,
+                            shape = CircleShape
+                        )
                 )
             }
 
@@ -112,11 +137,16 @@ fun UserHeader(
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
+
                     Icon(
                         imageVector = greetingIcon,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = if (greeting.contains("noches")) Color(0xFF9FA8DA) else Color(0xFFFFB74D)
+                        tint = if (greeting.contains("noches")) {
+                            Color(0xFF9FA8DA)
+                        } else {
+                            Color(0xFFFFB74D)
+                        }
                     )
                 }
 
@@ -132,17 +162,50 @@ fun UserHeader(
         }
 
         IconButton(
-            onClick = { /* TODO */ },
+            onClick = {
+                showNotifications = true
+            },
             modifier = Modifier
                 .padding(start = 8.dp)
                 .size(48.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), CircleShape)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = CircleShape
+                )
         ) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Notificaciones",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+            BadgedBox(
+                badge = {
+                    if (unreadNotificationCount > 0) {
+                        Badge {
+                            Text(text = unreadNotificationCount.toString())
+                        }
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Notificaciones",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
+    }
+
+    if (showNotifications) {
+        NotificationBottomSheet(
+            notifications = notifications,
+            unreadCount = unreadNotificationCount,
+            onDismiss = {
+                showNotifications = false
+            },
+            onNotificationClick = { notification ->
+                onNotificationClick(notification)
+                showNotifications = false
+            },
+            onMarkAllNotificationsRead = {
+                onMarkAllNotificationsRead()
+                showNotifications = false
+            }
+        )
     }
 }
