@@ -2,6 +2,8 @@ package com.updavid.liveoci_hilt.features.friends.data.repository
 
 import android.util.Log
 import com.updavid.liveoci_hilt.core.datastore.DataStoreService
+import com.updavid.liveoci_hilt.core.sse.SseDataSource
+import com.updavid.liveoci_hilt.core.sse.dtos.FriendListUpdateEventDto
 import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.api.FriendRequestLiveOciApi
 import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.mapper.toDomain
 import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.request.CancelRequestDto
@@ -10,9 +12,15 @@ import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.r
 import com.updavid.liveoci_hilt.features.friends.data.datasource.remote.models.request.SendRequestDto
 import com.updavid.liveoci_hilt.features.friends.domain.entity.Friend
 import com.updavid.liveoci_hilt.features.friends.domain.entity.FriendRequest
+import com.updavid.liveoci_hilt.features.friends.domain.entity.FriendUpdateEvent
 import com.updavid.liveoci_hilt.features.friends.domain.entity.MessageFriend
 import com.updavid.liveoci_hilt.features.friends.domain.repository.FriendRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -20,7 +28,8 @@ import javax.inject.Inject
 
 class FriendRequestRepositoryImpl @Inject constructor(
     private val api: FriendRequestLiveOciApi,
-    private val datastore: DataStoreService
+    private val datastore: DataStoreService,
+    private val sseDataSource: SseDataSource
 ): FriendRepository{
     override suspend fun cancelFriendRequest(id: String): MessageFriend {
         return try {
@@ -176,5 +185,17 @@ class FriendRequestRepositoryImpl @Inject constructor(
         } catch (e: IOException) {
             throw Exception("Error de conexión, revisa tu internet.")
         }
+    }
+
+    override fun streamFriendUpdates(): Flow<FriendUpdateEvent> = flow {
+        val userId = datastore.getUserId().first()
+            ?: throw Exception("Sesión no válida")
+
+        val sseFlow = sseDataSource.streamFriendUpdates(userId).map { it.toDomain() }
+
+        emitAll(sseFlow)
+    }.catch { e ->
+        Log.e("FriendRepository", "Error en el stream de amigos: ${e.message}")
+        throw Exception(e.message ?: "Se perdió la conexión en tiempo real")
     }
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetPhotoUseCase @Inject constructor(
     private val repository: PhotoRepository
 ) {
-    suspend operator fun invoke(): Result<Photo> {
+    suspend operator fun invoke(): Result<Unit> {
         return runCatching {
             repository.getPhotoUserRemote()
         }

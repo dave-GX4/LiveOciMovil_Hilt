@@ -1,12 +1,12 @@
 package com.updavid.liveoci_hilt.features.code.data.datasource.remote.mappers
 
-import com.updavid.liveoci_hilt.core.sse.dtos.CodeSSEDto
+import com.updavid.liveoci_hilt.core.sse.dtos.CodeUpdateEventDto
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.CodeResponseDto
 import com.updavid.liveoci_hilt.features.code.data.datasource.remote.models.response.FoundUserResponseDto
 import com.updavid.liveoci_hilt.features.code.domain.entity.Code
 import com.updavid.liveoci_hilt.features.code.domain.entity.FoundUser
 
-fun CodeSSEDto.toDomain(recordId: String, currentUserId: String): Code {
+fun CodeUpdateEventDto.toDomain(recordId: String, currentUserId: String): Code {
     return Code(
         id = recordId,
         userId = currentUserId,

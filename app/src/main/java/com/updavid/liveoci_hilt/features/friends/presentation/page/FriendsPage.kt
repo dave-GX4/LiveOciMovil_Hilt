@@ -127,7 +127,10 @@ fun FriendsPage(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(uiState.friends) { friend ->
+                        items(
+                            items = uiState.friends,
+                            key = { friend -> friend.friendshipId }
+                        ) { friend ->
                             FriendItemCard(
                                 friend = friend,
                                 onDelete = { viewModel.deleteFriend(friend.friendshipId) }

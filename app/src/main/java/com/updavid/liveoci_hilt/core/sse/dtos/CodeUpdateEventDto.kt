@@ -3,7 +3,7 @@ package com.updavid.liveoci_hilt.core.sse.dtos
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
-data class CodeSSEDto(
+data class CodeUpdateEventDto(
     val code: String,
     @SerializedName("expires_at")
     val expiresAt: LocalDateTime,
