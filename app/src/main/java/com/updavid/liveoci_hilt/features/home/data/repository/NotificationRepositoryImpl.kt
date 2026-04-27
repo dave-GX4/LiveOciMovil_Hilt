@@ -2,12 +2,17 @@ package com.updavid.liveoci_hilt.features.home.data.repository
 
 import android.util.Log
 import com.updavid.liveoci_hilt.core.datastore.DataStoreService
+import com.updavid.liveoci_hilt.core.sse.SseDataSource
 import com.updavid.liveoci_hilt.features.home.data.datasource.remote.api.NotificationLiveOciApi
 import com.updavid.liveoci_hilt.features.home.data.datasource.remote.mapper.toDomain
 import com.updavid.liveoci_hilt.features.home.domain.entity.Notification
 import com.updavid.liveoci_hilt.features.home.domain.entity.NotificationMessage
 import com.updavid.liveoci_hilt.features.home.domain.repository.NotificationRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -15,7 +20,8 @@ import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
     private val api: NotificationLiveOciApi,
-    private val dataStore: DataStoreService
+    private val dataStore: DataStoreService,
+    private val sseDataSource: SseDataSource
 ): NotificationRepository {
     override suspend fun getNotifications(
         limit: Int
@@ -100,6 +106,12 @@ class NotificationRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("NotificationRepo", "Error interno en el móvil: ${e.message}", e)
             throw Exception("Ocurrió un error interno al procesar la solicitud.")
+        }
+    }
+
+    override fun streamNotifications(): Flow<Notification> {
+        return dataStore.getUserId().filterNotNull().flatMapLatest { userId ->
+            sseDataSource.streamNotifications(userId).map { it.toDomain() }
         }
     }
 }

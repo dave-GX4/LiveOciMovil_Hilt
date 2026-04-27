@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.updavid.liveoci_hilt.core.di.StreamingClient
 import com.updavid.liveoci_hilt.core.sse.dtos.CodeUpdateEventDto
 import com.updavid.liveoci_hilt.core.sse.dtos.FriendListUpdateEventDto
+import com.updavid.liveoci_hilt.features.home.data.datasource.remote.mapper.NotificationResponseDto
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -86,6 +87,38 @@ class SseDataSourceImpl @Inject constructor(
 
         awaitClose {
             Log.d("SseFriends", "Cerrando conexión SSE de amigos")
+            eventSource.cancel()
+        }
+    }
+
+    override fun streamNotifications(id: String): Flow<NotificationResponseDto> = callbackFlow {
+        val request = Request.Builder()
+            .url("https://api-live-oci-production.up.railway.app/api/v2/sse/stream/$id")
+            .header("Accept", "text/event-stream")
+            .build()
+
+        val listener = object : EventSourceListener() {
+            override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
+                try {
+                    // Escuchamos exactamente el nombre del evento que envía tu Node.js
+                    if (type == "FRIEND_REQUEST_NEW") {
+                        val dto = gson.fromJson(data, NotificationResponseDto::class.java)
+                        trySend(dto)
+                    }
+                } catch (e: Exception) {
+                    Log.e("SseNotifications", "Error parseando evento $type: ${e.message}")
+                }
+            }
+
+            override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
+                close(t ?: Exception("Conexión SSE para notificaciones interrumpida"))
+            }
+        }
+
+        val eventSource = EventSources.createFactory(okHttpClient).newEventSource(request, listener)
+
+        awaitClose {
+            Log.d("SseNotifications", "Cerrando conexión SSE de notificaciones")
             eventSource.cancel()
         }
     }

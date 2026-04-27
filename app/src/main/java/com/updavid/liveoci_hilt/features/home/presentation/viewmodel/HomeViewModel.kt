@@ -38,6 +38,7 @@ class HomeViewModel @Inject constructor(
         observeLocalData()
         calculateGreeting()
         fetchRecommendedActivity()
+        observeRealTimeNotifications()
     }
 
     private fun fetchRemoteData() {
@@ -84,6 +85,20 @@ class HomeViewModel @Inject constructor(
                 greeting = message,
                 greetingIcon = icon
             )
+        }
+    }
+
+    private fun observeRealTimeNotifications() {
+        viewModelScope.launch {
+            // Recolectamos las notificaciones en tiempo real
+            notificationUseCases.streamNotifications().collect { newNotification ->
+                _uiState.update { state ->
+                    // Colocamos la nueva notificación en el índice 0 (hasta arriba)
+                    state.copy(
+                        notifications = listOf(newNotification) + state.notifications
+                    )
+                }
+            }
         }
     }
 

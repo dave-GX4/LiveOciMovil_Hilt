@@ -5,6 +5,7 @@ import com.updavid.liveoci_hilt.features.home.domain.usecase.GetNotificationsUse
 import com.updavid.liveoci_hilt.features.home.domain.usecase.MarkAllNotificationsReadUseCase
 import com.updavid.liveoci_hilt.features.home.domain.usecase.MarkNotificationReadUseCase
 import com.updavid.liveoci_hilt.features.home.domain.usecase.NotificationUseCases
+import com.updavid.liveoci_hilt.features.home.domain.usecase.StreamNotificationsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +19,8 @@ object HomeUseCasesModule {
         return NotificationUseCases(
             getNotifications = GetNotificationsUseCase(repository),
             markNotificationRead = MarkNotificationReadUseCase(repository),
-            markAllNotificationsRead = MarkAllNotificationsReadUseCase(repository)
+            markAllNotificationsRead = MarkAllNotificationsReadUseCase(repository),
+            streamNotifications = StreamNotificationsUseCase(repository)
         )
     }
 }
