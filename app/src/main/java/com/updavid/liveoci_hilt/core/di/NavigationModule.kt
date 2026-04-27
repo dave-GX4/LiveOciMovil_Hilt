@@ -1,6 +1,7 @@
 package com.updavid.liveoci_hilt.core.di
 
 import com.updavid.liveoci_hilt.core.navigation.FeatureNavGraph
+import com.updavid.liveoci_hilt.features.activity.navigation.ActivityNavGraph
 import com.updavid.liveoci_hilt.features.analyzer.navigation.AnalyzerNavGraph
 import com.updavid.liveoci_hilt.features.user.navigation.UserNavGraph
 import com.updavid.liveoci_hilt.features.auth.navigation.AuthNavGraph
@@ -64,5 +65,11 @@ abstract class NavigationModule {
     @IntoSet
     abstract fun bindFriendNavGraph(
         friendNavGraph: FriendNavGraph
+    ): FeatureNavGraph
+
+    @Binds
+    @IntoSet
+    abstract fun bindActivityNavGraph(
+        activityNavGraph: ActivityNavGraph
     ): FeatureNavGraph
 }

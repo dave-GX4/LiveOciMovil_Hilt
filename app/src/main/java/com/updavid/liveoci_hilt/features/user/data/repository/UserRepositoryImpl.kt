@@ -27,8 +27,7 @@ class UserRepositoryImpl @Inject constructor(
 ): UserRepository {
     override suspend fun deleteAccountUser(): Message {
         return try {
-            val userId = dataStore.getUserId().first()
-                ?: throw Exception("Sesión no válida")
+            val userId = dataStore.getUserId().first()?: throw Exception("Sesión no válida")
 
             val responseDto = api.deleteAccount(userId)
 

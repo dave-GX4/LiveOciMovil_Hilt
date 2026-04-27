@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.Home
@@ -57,7 +58,7 @@ fun BottomNavigationBar(
     val navItems = listOf(
         Icons.Rounded.Home,
         Icons.Rounded.Explore,
-        Icons.Filled.Add,
+        Icons.Filled.Workspaces,
         Icons.Rounded.BarChart,
         Icons.Rounded.Person
     )
